@@ -153,15 +153,3 @@ Discord-PA/
 ### Dispositivo de áudio não aparece
 - Certifique-se que o dispositivo está ativo no Windows
 - Reinicie o servidor para atualizar a lista
-
-## 📝 Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
-## 🤝 Contribuir
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
-
----
-
-Feito com ❤️ para a comunidade Discord
