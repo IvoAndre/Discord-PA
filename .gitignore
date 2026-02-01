@@ -124,4 +124,5 @@ backup_*.json
 # Configuração local (contém dados do utilizador)
 config.json
 
+package-lock.json
 run.bat
