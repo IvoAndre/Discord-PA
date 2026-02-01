@@ -1,4 +1,4 @@
-# �️ Discord PA System
+# Discord PA System
 
 Um sistema profissional de Public Address (PA) para Discord que transmite áudio de qualquer dispositivo de entrada ou saída do computador para múltiplos canais de voz simultaneamente.
 
