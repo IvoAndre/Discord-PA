@@ -1,0 +1,44 @@
+{
+  "name": "discord-pa",
+  "version": "1.0.0",
+  "description": "Sistema PA (Public Address) para Discord - Transmite áudio para múltiplos canais de voz simultaneamente",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "debug": "node src/index.js --debug"
+  },
+  "keywords": [
+    "discord",
+    "audio",
+    "bot",
+    "pa-system",
+    "voice",
+    "broadcast",
+    "announcement"
+  ],
+  "author": "IvoAndre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvoAndre/Discord-PA.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IvoAndre/Discord-PA/issues"
+  },
+  "homepage": "https://github.com/IvoAndre/Discord-PA#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "@discordjs/voice": "^0.18.0",
+    "libsodium-wrappers": "^0.7.13",
+    "opusscript": "^0.0.8",
+    "ffmpeg-static": "^5.2.0",
+    "prism-media": "^1.3.5",
+    "express": "^4.18.2",
+    "ws": "^8.16.0",
+    "dotenv": "^16.3.1"
+  },
+  "optionalDependencies": {
+    "naudiodon2": "^2.0.0"
+  }
+}

@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Anúncios Discord</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --accent: #45e976;
+            --accent-hover: #6bffa4;
+            --text-primary: #eee;
+            --text-secondary: #aaa;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+        }
+        
+        body {
+            font-family: 'Google Sans','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        header h1 span {
+            font-size: 2rem;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.connected {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .status-badge.disconnected {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+        
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .broadcast-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: #000;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .bot-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .bot-card {
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .bot-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .bot-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .bot-info {
+            flex: 1;
+        }
+        
+        .bot-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .bot-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .bot-status.online {
+            color: var(--success);
+        }
+        
+        .connection-list {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .connection-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .connection-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .connection-guild {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .channel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .channel-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .channel-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .channel-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .channel-members {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .broadcast-status {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .broadcast-status.active {
+            background: rgba(69, 233, 165, 0.2);
+            border: 2px solid var(--accent);
+        }
+        
+        .broadcast-indicator {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        
+        .broadcast-status.active .broadcast-indicator {
+            background: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .audio-visualizer {
+            height: 60px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 1rem;
+        }
+        
+        .audio-bar {
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: height 0.1s;
+        }
+        
+        .broadcast-status.active .audio-bar {
+            animation: audioWave 0.5s ease-in-out infinite;
+        }
+        
+        .audio-bar:nth-child(2) { animation-delay: 0.1s; }
+        .audio-bar:nth-child(3) { animation-delay: 0.2s; }
+        .audio-bar:nth-child(4) { animation-delay: 0.3s; }
+        .audio-bar:nth-child(5) { animation-delay: 0.4s; }
+        .audio-bar:nth-child(6) { animation-delay: 0.15s; }
+        .audio-bar:nth-child(7) { animation-delay: 0.25s; }
+        .audio-bar:nth-child(8) { animation-delay: 0.35s; }
+        
+        @keyframes audioWave {
+            0%, 100% { height: 20px; }
+            50% { height: 50px; }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state span {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .join-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .join-controls select {
+            flex: 1;
+        }
+        
+        .join-controls .btn {
+            white-space: nowrap;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-hover);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+        
+        .toast.success {
+            border-color: var(--success);
+        }
+        
+        .toast.warning {
+            border-color: var(--warning);
+            background: rgba(251, 191, 36, 0.1);
+        }
+        
+        .toast.error {
+            border-color: var(--error);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .broadcast-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><span>🎵</span> Sistema de Anúncios Discord</h1>
+        <div id="connectionStatus" class="status-badge disconnected">
+            ⚫ A conectar...
+        </div>
+    </header>
+    
+    <main>
+        <!-- Broadcast Status -->
+        <div id="broadcastStatus" class="broadcast-status">
+            <div class="broadcast-indicator">🔇</div>
+            <h2>Transmissão Inativa</h2>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                Selecione um dispositivo de áudio e clique em Iniciar
+            </p>
+            <div class="audio-visualizer">
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="broadcast-controls">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label for="audioDevice">Dispositivo de Áudio</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="audioDevice" style="flex: 1;">
+                        <option value="">A carregar dispositivos...</option>
+                    </select>
+                    <button id="btnRefreshDevices" class="btn btn-secondary" title="Atualizar lista de dispositivos" style="padding: 0.5rem 0.75rem;">
+                        🔄
+                    </button>
+                    <button id="btnSaveDeviceDefault" class="btn btn-secondary" title="Guardar como predefinição" style="padding: 0.5rem 0.75rem;">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                <button id="btnStart" class="btn btn-primary">
+                    ▶️ Iniciar Transmissão
+                </button>
+                <button id="btnTestTone" class="btn btn-secondary">
+                    🎵 Tom de Teste
+                </button>
+                <button id="btnStop" class="btn btn-danger" disabled>
+                    ⏹️ Parar
+                </button>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- Bots Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🤖 Bots Ativos</h2>
+                </div>
+                <div id="botList" class="bot-list">
+                    <div class="empty-state">
+                        <span>🔄</span>
+                        A carregar bots...
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Channels Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">📢 Ligar a Canal</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selectBot">Bot</label>
+                    <select id="selectBot">
+                        <option value="">Selecione um bot</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selectGuild">Servidor</label>
+                    <select id="selectGuild" disabled>
+                        <option value="">Selecione primeiro um bot</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selectChannel">Canal de Voz</label>
+                    <select id="selectChannel" disabled>
+                        <option value="">Selecione primeiro um servidor</option>
+                    </select>
+                </div>
+                
+                <button id="btnJoin" class="btn btn-success" disabled style="width: 100%;">
+                    🔊 Entrar no Canal
+                </button>
+                
+                <button id="btnSetPreset" class="btn btn-secondary" disabled style="width: 100%; margin-top: 0.5rem;">
+                    ⭐ Guardar como Predefinição
+                </button>
+            </div>
+            
+            <!-- Presets Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">⭐ Canais Predefinidos</h2>
+                </div>
+                
+                <div id="presetList" class="channel-list" style="margin-bottom: 1rem;">
+                    <div class="empty-state" style="padding: 1rem;">
+                        <span style="font-size: 2rem;">⭐</span>
+                        <p>Nenhuma predefinição guardada</p>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                            Selecione um bot, servidor e canal, depois clique em "Guardar como Predefinição"
+                        </p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <button id="btnJoinAllPresets" class="btn btn-primary" style="flex: 1;">
+                        🚀 Entrar em Todos
+                    </button>
+                    <button id="btnLeaveAll" class="btn btn-danger" style="flex: 1;">
+                        🚪 Sair de Todos
+                    </button>
+                </div>
+            </div>
+            
+            <!-- VAD Settings Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">🎤 Deteção de Voz (VAD)</h2>
+                </div>
+                
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                    Quando ativado, os bots só mostram o indicador "a falar" quando há som no áudio.
+                </p>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="vadEnabled" checked style="width: 18px; height: 18px; accent-color: var(--accent);">
+                        <span>Ativar deteção de atividade de voz</span>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vadThreshold">Threshold de silêncio: <span id="vadThresholdValue">1</span></label>
+                    <input type="range" id="vadThreshold" min="1" max="500" value="1" 
+                           style="width: 100%; accent-color: var(--accent);">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span>Só silêncio absoluto</span>
+                        <span>Ruído leve = silêncio</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vadSilenceTimeout">Tempo de silêncio: <span id="vadSilenceTimeoutValue">500</span>ms</label>
+                    <input type="range" id="vadSilenceTimeout" min="200" max="2000" value="500" step="100"
+                           style="width: 100%; accent-color: var(--accent);">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span>Reativo (200ms)</span>
+                        <span>Lento (2s)</span>
+                    </div>
+                </div>
+                
+                <div id="vadStatus" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; text-align: center;">
+                    <span id="vadIndicator" style="font-size: 1.5rem;">🔇</span>
+                    <span id="vadStatusText" style="margin-left: 0.5rem;">Silêncio</span>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // WebSocket connection
+        let ws;
+        let state = {
+            bots: [],
+            audioDevice: null,
+            isBroadcasting: false,
+            audioDevices: [],
+            presetChannels: []
+        };
+        let guilds = [];
+        let channels = [];
+        
+        function connect() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}`);
+            
+            ws.onopen = () => {
+                console.log('WebSocket conectado');
+                updateConnectionStatus(true);
+                send({ type: 'getState' });
+            };
+            
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleMessage(message);
+            };
+            
+            ws.onclose = () => {
+                console.log('WebSocket desconectado');
+                updateConnectionStatus(false);
+                setTimeout(connect, 3000);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('Erro WebSocket:', error);
+            };
+        }
+        
+        function send(data) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(data));
+            }
+        }
+        
+        function handleMessage(message) {
+            switch (message.type) {
+                case 'state':
+                    state = message;
+                    updateUI();
+                    break;
+                case 'guilds':
+                    guilds = message.guilds;
+                    updateGuildSelect();
+                    break;
+                case 'channels':
+                    channels = message.channels;
+                    updateChannelSelect();
+                    break;
+                case 'audioDevices':
+                    state.audioDevices = message.devices;
+                    updateAudioDevices();
+                    break;
+                case 'presetChannels':
+                    state.presetChannels = message.presets;
+                    updatePresetList();
+                    break;
+                case 'joinAllPresetsResult':
+                    const successCount = message.results.filter(r => r.success).length;
+                    const failCount = message.results.filter(r => !r.success).length;
+                    if (failCount > 0) {
+                        showToast(`Entrou em ${successCount} canais, ${failCount} falharam`, 'warning');
+                    } else {
+                        showToast(`Entrou em ${successCount} canais!`, 'success');
+                    }
+                    break;
+                case 'warning':
+                    showToast(message.message, 'warning');
+                    break;
+                case 'error':
+                    showToast(message.message, 'error');
+                    break;
+                case 'speakingChange':
+                    updateVadIndicator(message.speaking);
+                    break;
+            }
+        }
+        
+        function updateConnectionStatus(connected) {
+            const el = document.getElementById('connectionStatus');
+            if (connected) {
+                el.className = 'status-badge connected';
+                el.textContent = '🟢 Conectado';
+            } else {
+                el.className = 'status-badge disconnected';
+                el.textContent = '🔴 Desconectado';
+            }
+        }
+        
+        function updateUI() {
+            updateBroadcastStatus();
+            updateBotList();
+            updateAudioDevices();
+            updateBotSelect();
+            updatePresetList();
+            updateVadSettings();
+        }
+        
+        function updateVadSettings() {
+            const vad = state.vad || {};
+            const vadEnabled = document.getElementById('vadEnabled');
+            const vadThreshold = document.getElementById('vadThreshold');
+            const vadThresholdValue = document.getElementById('vadThresholdValue');
+            const vadSilenceTimeout = document.getElementById('vadSilenceTimeout');
+            const vadSilenceTimeoutValue = document.getElementById('vadSilenceTimeoutValue');
+            
+            if (vadEnabled) vadEnabled.checked = vad.enabled !== false;
+            if (vadThreshold) vadThreshold.value = vad.threshold || 50;
+            if (vadThresholdValue) vadThresholdValue.textContent = vad.threshold || 50;
+            if (vadSilenceTimeout) vadSilenceTimeout.value = vad.silenceTimeout || 500;
+            if (vadSilenceTimeoutValue) vadSilenceTimeoutValue.textContent = vad.silenceTimeout || 500;
+            
+            updateVadIndicator(vad.isSpeaking);
+        }
+        
+        function updateVadIndicator(speaking) {
+            const indicator = document.getElementById('vadIndicator');
+            const statusText = document.getElementById('vadStatusText');
+            const statusDiv = document.getElementById('vadStatus');
+            
+            if (indicator && statusText && statusDiv) {
+                if (speaking) {
+                    indicator.textContent = '🎤';
+                    statusText.textContent = 'A falar';
+                    statusDiv.style.background = 'rgba(69, 233, 165, 0.2)';
+                    statusDiv.style.border = '1px solid var(--accent)';
+                } else {
+                    indicator.textContent = '🔇';
+                    statusText.textContent = 'Silêncio';
+                    statusDiv.style.background = 'var(--bg-tertiary)';
+                    statusDiv.style.border = 'none';
+                }
+            }
+        }
+        
+        function updateBroadcastStatus() {
+            const el = document.getElementById('broadcastStatus');
+            const btnStart = document.getElementById('btnStart');
+            const btnTestTone = document.getElementById('btnTestTone');
+            const btnStop = document.getElementById('btnStop');
+            
+            const activeConnections = state.activeConnections || 0;
+            const hasConnections = activeConnections > 0;
+            
+            if (state.isBroadcasting) {
+                el.className = 'broadcast-status active';
+                el.querySelector('.broadcast-indicator').textContent = '🔊';
+                el.querySelector('h2').textContent = 'A Transmitir...';
+                el.querySelector('p').textContent = `Áudio a ser transmitido para ${activeConnections} canal(is)`;
+                btnStart.disabled = true;
+                btnTestTone.disabled = true;
+                btnStop.disabled = false;
+            } else {
+                el.className = 'broadcast-status';
+                el.querySelector('.broadcast-indicator').textContent = '🔇';
+                el.querySelector('h2').textContent = 'Transmissão Inativa';
+                
+                if (!hasConnections) {
+                    el.querySelector('p').textContent = '⚠️ Conecte pelo menos um bot a um canal de voz';
+                    el.querySelector('p').style.color = 'var(--warning)';
+                } else {
+                    el.querySelector('p').textContent = `${activeConnections} bot(s) conectado(s) - Pronto para transmitir`;
+                    el.querySelector('p').style.color = 'var(--text-secondary)';
+                }
+                
+                btnStart.disabled = !hasConnections;
+                btnTestTone.disabled = !hasConnections;
+                btnStop.disabled = true;
+            }
+        }
+        
+        function updateBotList() {
+            const container = document.getElementById('botList');
+            
+            if (!state.bots || state.bots.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span>🤖</span>
+                        Nenhum bot configurado
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = state.bots.map(bot => `
+                <div class="bot-card">
+                    <div class="bot-avatar">
+                        ${bot.avatar 
+                            ? `<img src="${bot.avatar}" alt="${bot.username}">`
+                            : '🤖'
+                        }
+                    </div>
+                    <div class="bot-info">
+                        <div class="bot-name">${bot.username || 'A carregar...'}</div>
+                        <div class="bot-status ${bot.ready ? 'online' : ''}">
+                            ${bot.ready ? '🟢 Online' : '🔴 Offline'}
+                        </div>
+                        ${bot.connections && bot.connections.length > 0 ? `
+                            <div class="connection-list">
+                                ${bot.connections.map(conn => `
+                                    <div class="connection-item">
+                                        <div class="connection-info">
+                                            <span>🔊 ${conn.channelName}</span>
+                                            <span class="connection-guild">${conn.guildName}</span>
+                                        </div>
+                                        <button class="btn btn-secondary" 
+                                                onclick="leaveChannel(${bot.index}, '${conn.guildId}')"
+                                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                            ❌ Sair
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateAudioDevices() {
+            const select = document.getElementById('audioDevice');
+            const indicator = document.getElementById('deviceDefaultIndicator');
+            const devices = state.audioDevices || [];
+            const currentDevice = state.audioDevice;
+            const defaultDevice = state.defaultAudioDevice;
+            
+            select.innerHTML = devices.length > 0
+                ? devices.map(d => {
+                    const typeIcon = d.isRecording ? '🎤' : '🔊';
+                    const typeName = d.isRecording ? 'Gravação' : 'Reprodução';
+                    const isDefault = d.id === defaultDevice;
+                    const defaultMark = isDefault ? '⭐ ' : '';
+                    return `
+                        <option value="${d.id}" ${currentDevice && currentDevice.id === d.id ? 'selected' : ''}>
+                            ${defaultMark}${typeIcon} ${d.name} (${typeName})
+                        </option>
+                    `;
+                }).join('')
+                : '<option value="">Nenhum dispositivo disponível</option>';
+            
+            // Mostrar indicador se dispositivo atual é o predefinido
+            if (indicator) {
+                if (currentDevice && currentDevice.id === defaultDevice) {
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                }
+            }
+        }
+        
+        function updateBotSelect() {
+            const select = document.getElementById('selectBot');
+            const bots = state.bots || [];
+            
+            select.innerHTML = '<option value="">Selecione um bot</option>' +
+                bots.filter(b => b.ready).map(b => `
+                    <option value="${b.index}">${b.username}</option>
+                `).join('');
+        }
+        
+        function updateGuildSelect() {
+            const select = document.getElementById('selectGuild');
+            
+            select.innerHTML = '<option value="">Selecione um servidor</option>' +
+                guilds.map(g => `
+                    <option value="${g.id}">${g.name}</option>
+                `).join('');
+            
+            select.disabled = guilds.length === 0;
+        }
+        
+        function updateChannelSelect() {
+            const select = document.getElementById('selectChannel');
+            const btnJoin = document.getElementById('btnJoin');
+            const btnSetPreset = document.getElementById('btnSetPreset');
+            
+            select.innerHTML = '<option value="">Selecione um canal</option>' +
+                channels.map(c => `
+                    <option value="${c.id}">${c.name} (${c.memberCount} membros)</option>
+                `).join('');
+            
+            select.disabled = channels.length === 0;
+            btnJoin.disabled = channels.length === 0;
+            btnSetPreset.disabled = channels.length === 0;
+        }
+        
+        function updatePresetList() {
+            const container = document.getElementById('presetList');
+            const presets = state.presetChannels || [];
+            
+            if (presets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 1rem;">
+                        <span style="font-size: 2rem;">⭐</span>
+                        <p>Nenhuma predefinição guardada</p>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">
+                            Selecione um bot, servidor e canal, depois clique em "Guardar como Predefinição"
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = presets.map(p => `
+                <div class="channel-item">
+                    <div class="channel-name">
+                        <span>🤖 ${p.botName}</span>
+                        <span style="color: var(--text-secondary); font-size: 0.8rem;">
+                            ${p.guildName} → ${p.channelName}
+                        </span>
+                    </div>
+                    <button class="btn btn-secondary" 
+                            onclick="removePreset(${p.botIndex}, '${p.guildId}')"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                        ❌
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function removePreset(botIndex, guildId) {
+            send({ type: 'removePresetChannel', botIndex, guildId });
+            showToast('Predefinição removida', 'info');
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Event Handlers
+        document.getElementById('btnStart').addEventListener('click', () => {
+            send({ type: 'startBroadcast' });
+            showToast('Transmissão iniciada!', 'success');
+        });
+        
+        document.getElementById('btnTestTone').addEventListener('click', () => {
+            send({ type: 'startTestTone' });
+            showToast('Tom de teste iniciado (10 segundos)', 'success');
+        });
+        
+        document.getElementById('btnStop').addEventListener('click', () => {
+            send({ type: 'stopBroadcast' });
+            showToast('Transmissão parada', 'info');
+        });
+        
+        document.getElementById('btnRefreshDevices').addEventListener('click', () => {
+            send({ type: 'refreshAudioDevices' });
+            showToast('A atualizar lista de dispositivos...', 'info');
+        });
+        
+        document.getElementById('audioDevice').addEventListener('change', (e) => {
+            send({ type: 'setAudioDevice', deviceId: parseInt(e.target.value) });
+            showToast('Dispositivo selecionado', 'success');
+        });
+        
+        document.getElementById('btnSaveDeviceDefault').addEventListener('click', () => {
+            const deviceId = parseInt(document.getElementById('audioDevice').value);
+            if (!isNaN(deviceId)) {
+                send({ type: 'setDefaultAudioDevice', deviceId });
+                showToast('Dispositivo guardado como predefinição!', 'success');
+            }
+        });
+        
+        document.getElementById('selectBot').addEventListener('change', (e) => {
+            const botIndex = e.target.value;
+            if (botIndex !== '') {
+                send({ type: 'getGuilds', botIndex: parseInt(botIndex) });
+            }
+            document.getElementById('selectGuild').disabled = !botIndex;
+            document.getElementById('selectChannel').disabled = true;
+            document.getElementById('btnJoin').disabled = true;
+            document.getElementById('btnSetPreset').disabled = true;
+        });
+        
+        document.getElementById('selectGuild').addEventListener('change', (e) => {
+            const guildId = e.target.value;
+            if (guildId) {
+                send({ type: 'getChannels', guildId });
+            }
+            document.getElementById('selectChannel').disabled = !guildId;
+            document.getElementById('btnJoin').disabled = true;
+        });
+        
+        document.getElementById('selectChannel').addEventListener('change', (e) => {
+            document.getElementById('btnJoin').disabled = !e.target.value;
+        });
+        
+        document.getElementById('btnJoin').addEventListener('click', () => {
+            const botIndex = parseInt(document.getElementById('selectBot').value);
+            const guildId = document.getElementById('selectGuild').value;
+            const channelId = document.getElementById('selectChannel').value;
+            
+            if (botIndex >= 0 && guildId && channelId) {
+                send({ type: 'joinChannel', botIndex, guildId, channelId });
+                showToast('A entrar no canal...', 'info');
+            }
+        });
+        
+        document.getElementById('btnSetPreset').addEventListener('click', () => {
+            const botIndex = parseInt(document.getElementById('selectBot').value);
+            const guildId = document.getElementById('selectGuild').value;
+            const channelId = document.getElementById('selectChannel').value;
+            
+            if (botIndex >= 0 && guildId && channelId) {
+                send({ type: 'setPresetChannel', botIndex, guildId, channelId });
+                showToast('Predefinição guardada!', 'success');
+            }
+        });
+        
+        document.getElementById('btnJoinAllPresets').addEventListener('click', () => {
+            send({ type: 'joinAllPresets' });
+            showToast('A entrar nos canais predefinidos...', 'info');
+        });
+        
+        document.getElementById('btnLeaveAll').addEventListener('click', () => {
+            send({ type: 'leaveAllChannels' });
+            showToast('A sair de todos os canais...', 'info');
+        });
+        
+        // VAD Controls
+        document.getElementById('vadEnabled').addEventListener('change', (e) => {
+            send({ type: 'setVadEnabled', enabled: e.target.checked });
+            showToast(e.target.checked ? 'VAD ativado' : 'VAD desativado', 'info');
+        });
+        
+        document.getElementById('vadThreshold').addEventListener('input', (e) => {
+            document.getElementById('vadThresholdValue').textContent = e.target.value;
+        });
+        
+        document.getElementById('vadThreshold').addEventListener('change', (e) => {
+            send({ type: 'setVadThreshold', threshold: parseInt(e.target.value) });
+            showToast(`Threshold definido para ${e.target.value}`, 'info');
+        });
+        
+        document.getElementById('vadSilenceTimeout').addEventListener('input', (e) => {
+            document.getElementById('vadSilenceTimeoutValue').textContent = e.target.value;
+        });
+        
+        document.getElementById('vadSilenceTimeout').addEventListener('change', (e) => {
+            send({ type: 'setVadSilenceTimeout', timeout: parseInt(e.target.value) });
+            showToast(`Tempo de silêncio definido para ${e.target.value}ms`, 'info');
+        });
+        
+        function leaveChannel(botIndex, guildId) {
+            send({ type: 'leaveChannel', botIndex, guildId });
+            showToast('A sair do canal...', 'info');
+        }
+        
+        // Initialize
+        connect();
+    </script>
+</body>
+</html>
