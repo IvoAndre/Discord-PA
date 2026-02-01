@@ -4,7 +4,6 @@ Um sistema profissional de Public Address (PA) para Discord que transmite áudio
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/Discord.js-14.14-blue?logo=discord)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 
 ## ✨ Funcionalidades
 
