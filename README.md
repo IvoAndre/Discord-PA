@@ -92,7 +92,7 @@ Abra o navegador em **http://localhost:3000**
 O VAD permite que os bots mostrem o indicador de "a falar" no Discord apenas quando há som real:
 
 - **Ativar/Desativar**: Checkbox na interface
-- **Threshold**: Sensibilidade do detetor (10-500, menor = mais sensível)
+- **Threshold**: Sensibilidade do detetor (1-500, menor = mais sensível)
 - **Timeout de Silêncio**: Tempo em ms antes de parar após silêncio (200-2000ms)
 
 ## 🔧 Comandos
