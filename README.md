@@ -5,6 +5,9 @@ Um sistema profissional de Public Address (PA) para Discord que transmite áudio
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/Discord.js-14.14-blue?logo=discord)
 
+<img width="1920" height="960" alt="image" src="https://github.com/user-attachments/assets/b9af9f14-b642-47a7-8371-c413c093b9fd" />
+
+
 ## Funcionalidades
 
 - **Múltiplos Bots** - Suporte para vários bots Discord funcionando simultaneamente
