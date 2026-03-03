@@ -1,1117 +1,1575 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Anúncios Discord</title>
+    <title>Discord PA — Public Address System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%20432.8%20374.26%22%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill%3A%2399aab5%3B%7D.cls-2%7Bfill%3A%23ccd6dd%3B%7D.cls-3%7Bfill%3A%2366757f%3B%7D.cls-4%7Bfill%3A%232538ff%3B%7D.cls-5%7Bfill%3A%230000c8%3B%7D.cls-6%7Bfill%3A%235865f2%3B%7D%3C/style%3E%3C/defs%3E%3Cg%3E%3Cpath%20class%3D%22cls-6%22%20d%3D%22M320.07%2023.89C295.97%2012.83%20270.13%204.69%20243.11.02c-.49-.09-.98.13-1.24.59-3.32%205.91-7%2013.62-9.58%2019.68-29.06-4.35-57.97-4.35-86.44%200-2.58-6.2-6.39-13.77-9.73-19.68-.25-.44-.75-.66-1.24-.59-27%204.65-52.85%2012.8-76.96%2023.87-.21.09-.39.24-.51.44C8.4%2097.55-5.02%20168.98%201.56%20239.53c.03.35.22.68.49.89%2032.34%2023.75%2063.67%2038.17%2094.41%2047.72.49.15%201.01-.03%201.33-.44%207.27-9.93%2013.76-20.4%2019.31-31.42.33-.64.01-1.41-.66-1.67-10.28-3.9-20.07-8.66-29.49-14.06-.75-.44-.8-1.5-.12-2.01%201.98-1.49%203.96-3.03%205.86-4.59.34-.28.82-.35%201.22-.17%2061.88%2028.25%20128.87%2028.25%20190.01%200%20.4-.19.88-.13%201.24.15%201.89%201.56%203.88%203.12%205.87%204.61.69.51.64%201.58-.1%202.01-9.42%205.51-19.21%2010.16-29.51%2014.04-.67.26-.97%201.04-.64%201.68%205.68%2011%2012.16%2021.47%2019.3%2031.4.3.42.83.6%201.33.45%2030.89-9.56%2062.22-23.97%2094.56-47.72.28-.21.46-.53.49-.87%207.88-81.56-13.2-152.4-55.9-215.2-.1-.21-.28-.36-.49-.45ZM126.35%20196.57c-18.63%200-33.98-17.1-33.98-38.11s15.05-38.11%2033.98-38.11%2034.28%2017.25%2033.98%2038.11c0%2021-15.05%2038.11-33.98%2038.11ZM251.98%20196.57c-18.63%200-33.98-17.1-33.98-38.11s15.05-38.11%2033.98-38.11%2034.28%2017.25%2033.98%2038.11c0%2021-14.9%2038.11-33.98%2038.11Z%22/%3E%3Cpath%20class%3D%22cls-5%22%20d%3D%22M282.87%20354.63c-1.81%2014.45-14.99%2019.63-29.44%2019.63s-24.7-11.72-22.9-26.17l6.54-58.88c1.81-14.45%2014.99-26.17%2029.44-26.17s42.31%200%2022.9%2026.17c-19.42%2026.17-6.54%2065.42-6.54%2065.42Z%22/%3E%3Cpath%20class%3D%22cls-2%22%20d%3D%22M432.8%20249.96c0%2045.15-10.1%2081.77-22.57%2081.77s-133.78-36.62-133.78-81.77%20121.32-81.77%20133.78-81.77%2022.57%2036.62%2022.57%2081.77Z%22/%3E%3Cellipse%20class%3D%22cls-3%22%20cx%3D%22410.23%22%20cy%3D%22249.96%22%20rx%3D%2222.57%22%20ry%3D%2281.77%22/%3E%3Cpath%20class%3D%22cls-4%22%20d%3D%22M315.69%20295.76l-91.59-6.54c-32.71%200-32.71-78.5%200-78.5l91.59-6.54c-19.63%2019.63-19.63%2071.96%200%2091.59Z%22/%3E%3Cellipse%20class%3D%22cls-1%22%20cx%3D%22403.36%22%20cy%3D%22249.96%22%20rx%3D%229.81%22%20ry%3D%2228.44%22/%3E%3C/g%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --bg-tertiary: #0f3460;
-            --accent: #45e976;
-            --accent-hover: #6bffa4;
-            --text-primary: #eee;
-            --text-secondary: #aaa;
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --error: #f87171;
+            --bg-0: #0b0e14;
+            --bg-1: #11151c;
+            --bg-2: #161b25;
+            --bg-3: #1c2333;
+            --bg-hover: #232b3e;
+            --border: rgba(255,255,255,0.06);
+            --border-focus: rgba(99,128,255,0.5);
+            --accent: #6380ff;
+            --accent-glow: rgba(99,128,255,0.25);
+            --accent-hover: #7b95ff;
+            --green: #34d399;
+            --green-bg: rgba(52,211,153,0.10);
+            --yellow: #fbbf24;
+            --yellow-bg: rgba(251,191,36,0.10);
+            --red: #f87171;
+            --red-bg: rgba(248,113,113,0.10);
+            --text-0: #f0f2f5;
+            --text-1: #c5c9d6;
+            --text-2: #7e8598;
+            --radius: 10px;
+            --radius-lg: 14px;
+            --transition: 150ms ease;
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 60px;
         }
-        
+
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Google Sans','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-0);
+            color: var(--text-0);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
-        
-        header {
-            background: var(--bg-secondary);
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid var(--accent);
+
+        /* ─── Layout ─── */
+        .app { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-1);
+            border-right: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 100;
+            transition: width 0.25s ease;
         }
-        
-        header h1 {
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.25s ease;
         }
-        
-        header h1 span {
-            font-size: 2rem;
-        }
-        
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .status-badge.connected {
-            background: rgba(74, 222, 128, 0.2);
-            color: var(--success);
-            border: 1px solid var(--success);
-        }
-        
-        .status-badge.disconnected {
-            background: rgba(248, 113, 113, 0.2);
-            color: var(--error);
-            border: 1px solid var(--error);
-        }
-        
-        main {
-            padding: 2rem;
-            max-width: 1400px;
+
+        .sidebar.collapsed ~ .content { margin-left: var(--sidebar-collapsed); }
+
+        .content-inner {
+            max-width: 960px;
             margin: 0 auto;
+            padding: 2rem 2.5rem 4rem;
         }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
+
+        /* ─── Sidebar ─── */
+        .sidebar-header {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            min-height: 56px;
         }
-        
+
+        .sidebar.collapsed .sidebar-header {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            gap: 0.35rem;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .sidebar-logo .brand-icon {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo .brand-text {
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar.collapsed .brand-text { opacity: 0; width: 0; overflow: hidden; display: none; }
+
+        .sidebar.collapsed .sidebar-logo { gap: 0; }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-2);
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+
+        .sidebar-toggle:hover { color: var(--text-0); background: var(--bg-hover); }
+
+        .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+
+        .sidebar-nav {
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: var(--radius);
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
+            user-select: none;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .nav-item:hover { background: var(--bg-hover); color: var(--text-1); }
+        .nav-item.active { background: var(--accent-glow); color: var(--accent); }
+        .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 0.6rem;
+            gap: 0;
+        }
+
+        .nav-label {
+            opacity: 1;
+            transition: opacity 0.2s ease, width 0.2s ease;
+        }
+
+        .sidebar.collapsed .nav-label { opacity: 0; width: 0; overflow: hidden; display: none; }
+
+        .sidebar-footer {
+            padding: 0.6rem 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar.collapsed .sidebar-footer {
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ws-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-2);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .ws-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            flex-shrink: 0;
+            transition: background var(--transition);
+        }
+
+        .ws-dot.connected { background: var(--green); }
+
+        .sidebar.collapsed .ws-label { opacity: 0; width: 0; overflow: hidden; display: none; }
+
+        .sidebar.collapsed .ws-status { justify-content: center; gap: 0; }
+
+        /* ─── Language Switcher ─── */
+        .lang-switcher {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.5rem 0;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 0.3rem 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-2);
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .lang-btn:hover { background: var(--bg-hover); color: var(--text-1); }
+        .lang-btn.active { background: var(--accent-glow); color: var(--accent); border-color: var(--accent); }
+        .sidebar.collapsed .lang-btn .lang-full { display: none; }
+        .sidebar:not(.collapsed) .lang-btn .lang-short { display: none; }
+
+        .sidebar.collapsed .lang-switcher {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .lang-btn {
+            flex: unset;
+            padding: 0.25rem;
+        }
+
+        /* ─── Sections ─── */
+        .section {
+            padding-top: 1rem;
+            margin-bottom: 3rem;
+            scroll-margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            color: var(--text-2);
+            font-size: 0.88rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        /* ─── Cards ─── */
         .card {
-            background: var(--bg-secondary);
-            border-radius: 12px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
             padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.25rem;
         }
-        
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.25rem;
         }
-        
-        .card-title {
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+
+        .card-title { font-size: 0.95rem; font-weight: 600; color: var(--text-1); }
+
+        .card-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
         }
-        
-        .broadcast-controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+
+        .card-badge.green { background: var(--green-bg); color: var(--green); }
+
+        /* ─── Grid ─── */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
         }
-        
+
+        /* ─── Buttons ─── */
         .btn {
-            padding: 0.75rem 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1rem;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: #000;
-        }
-        
-        .btn-danger {
-            background: var(--error);
-            color: white;
-        }
-        
-        select {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        
-        select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .bot-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .bot-card {
-            background: var(--bg-tertiary);
-            border-radius: 10px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .bot-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--bg-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .bot-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        .bot-info {
-            flex: 1;
-        }
-        
-        .bot-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .bot-status {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .bot-status.online {
-            color: var(--success);
-        }
-        
-        .connection-list {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .connection-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .connection-info {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .connection-guild {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-        
-        .channel-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .channel-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-        
-        .channel-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .channel-name {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .channel-members {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        
-        .broadcast-status {
-            text-align: center;
-            padding: 2rem;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-        }
-        
-        .broadcast-status.active {
-            background: rgba(69, 233, 165, 0.2);
-            border: 2px solid var(--accent);
-        }
-        
-        .broadcast-indicator {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            border-radius: 50%;
-            background: var(--bg-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-        }
-        
-        .broadcast-status.active .broadcast-indicator {
-            background: var(--accent);
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
-        
-        .audio-visualizer {
-            height: 60px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            padding: 0 1rem;
-        }
-        
-        .audio-bar {
-            width: 4px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 2px;
-            transition: height 0.1s;
-        }
-        
-        .broadcast-status.active .audio-bar {
-            animation: audioWave 0.5s ease-in-out infinite;
-        }
-        
-        .audio-bar:nth-child(2) { animation-delay: 0.1s; }
-        .audio-bar:nth-child(3) { animation-delay: 0.2s; }
-        .audio-bar:nth-child(4) { animation-delay: 0.3s; }
-        .audio-bar:nth-child(5) { animation-delay: 0.4s; }
-        .audio-bar:nth-child(6) { animation-delay: 0.15s; }
-        .audio-bar:nth-child(7) { animation-delay: 0.25s; }
-        .audio-bar:nth-child(8) { animation-delay: 0.35s; }
-        
-        @keyframes audioWave {
-            0%, 100% { height: 20px; }
-            50% { height: 50px; }
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-        }
-        
-        .empty-state span {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 1rem;
-        }
-        
-        .join-controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        
-        .join-controls select {
-            flex: 1;
-        }
-        
-        .join-controls .btn {
+            transition: all var(--transition);
             white-space: nowrap;
         }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        .btn svg { width: 16px; height: 16px; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+        .btn-ghost { background: transparent; color: var(--text-1); border: 1px solid var(--border); }
+        .btn-ghost:hover:not(:disabled) { background: var(--bg-hover); border-color: rgba(255,255,255,0.12); }
+        .btn-success { background: var(--green); color: #0b0e14; }
+        .btn-success:hover:not(:disabled) { filter: brightness(1.1); }
+        .btn-danger { background: var(--red); color: #fff; }
+        .btn-danger:hover:not(:disabled) { filter: brightness(1.1); }
+        .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
+        .btn-icon { padding: 0.45rem; min-width: 0; }
+
+        /* ─── Form Controls ─── */
+        select, input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--bg-3);
+            color: var(--text-0);
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color var(--transition);
+            outline: none;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-tertiary);
-            border-radius: 4px;
+
+        select:focus, input:focus { border-color: var(--border-focus); }
+        select { cursor: pointer; }
+        label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-2); margin-bottom: 0.35rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-row { display: flex; gap: 0.5rem; align-items: flex-end; }
+
+        /* ─── Broadcast Hero ─── */
+        .broadcast-hero {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-lg);
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
-        
-        ::-webkit-scrollbar-thumb {
+
+        .broadcast-hero.active {
+            background: linear-gradient(135deg, rgba(99,128,255,0.08), rgba(52,211,153,0.06));
+            border-color: var(--accent);
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .broadcast-icon {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: var(--bg-3);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .broadcast-hero.active .broadcast-icon {
             background: var(--accent);
-            border-radius: 4px;
+            box-shadow: 0 0 24px var(--accent-glow);
+            animation: pulse 2s ease-in-out infinite;
         }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-hover);
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 24px var(--accent-glow); }
+            50% { transform: scale(1.06); box-shadow: 0 0 36px var(--accent-glow); }
         }
-        
+
+        .broadcast-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .broadcast-sub { font-size: 0.85rem; color: var(--text-2); }
+
+        .audio-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 40px; margin-top: 1rem; }
+        .audio-wave .bar { width: 3px; height: 14px; background: var(--accent); border-radius: 2px; opacity: 0.3; }
+        .broadcast-hero.active .audio-wave .bar { opacity: 1; animation: wave 0.6s ease-in-out infinite alternate; }
+        .audio-wave .bar:nth-child(2) { animation-delay: 0.08s; }
+        .audio-wave .bar:nth-child(3) { animation-delay: 0.16s; }
+        .audio-wave .bar:nth-child(4) { animation-delay: 0.24s; }
+        .audio-wave .bar:nth-child(5) { animation-delay: 0.32s; }
+        .audio-wave .bar:nth-child(6) { animation-delay: 0.12s; }
+        .audio-wave .bar:nth-child(7) { animation-delay: 0.20s; }
+        @keyframes wave { to { height: 36px; } }
+
+        .controls-bar { display: flex; gap: 0.75rem; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .controls-bar .form-group { margin-bottom: 0; flex: 1; min-width: 200px; }
+        .controls-bar .btn-group { display: flex; gap: 0.4rem; align-items: center; padding-bottom: 1px; }
+
+        /* ─── Bot / Token Items ─── */
+        .bot-item {
+            display: flex; align-items: center; gap: 0.85rem;
+            padding: 0.85rem; background: var(--bg-3); border-radius: var(--radius); margin-bottom: 0.5rem;
+        }
+
+        .bot-avatar {
+            width: 40px; height: 40px; border-radius: 50%; background: var(--bg-hover);
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+
+        .bot-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .bot-meta { flex: 1; min-width: 0; }
+        .bot-name { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bot-tag { font-size: 0.75rem; color: var(--text-2); }
+        .online-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+        .online-dot.on { background: var(--green); }
+        .online-dot.off { background: var(--red); }
+
+        .connection-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.4rem; }
+
+        .conn-pill {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 20px;
+            background: var(--accent-glow); color: var(--accent);
+        }
+
+        .conn-pill button { background: none; border: none; color: inherit; cursor: pointer; font-size: 0.8rem; padding: 0; opacity: 0.7; }
+        .conn-pill button:hover { opacity: 1; }
+
+        .token-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 0.85rem; background: var(--bg-3); border-radius: var(--radius); margin-bottom: 0.5rem;
+        }
+
+        .token-info { flex: 1; min-width: 0; }
+        .token-name { font-size: 0.9rem; font-weight: 600; }
+        .token-masked { font-size: 0.75rem; color: var(--text-2); font-family: 'Consolas', 'Monaco', monospace; }
+
+        .token-index {
+            width: 28px; height: 28px; border-radius: 6px; background: var(--accent-glow);
+            color: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+        }
+
+        /* ─── Preset Items ─── */
+        .preset-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.65rem 0.85rem; background: var(--bg-3); border-radius: var(--radius); margin-bottom: 0.5rem;
+        }
+
+        .preset-label { font-size: 0.85rem; font-weight: 500; }
+        .preset-detail { font-size: 0.75rem; color: var(--text-2); }
+
+        /* ─── Range ─── */
+        input[type="range"] {
+            -webkit-appearance: none; appearance: none; width: 100%;
+            height: 6px; background: var(--bg-3); border-radius: 3px; outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer;
+        }
+
+        /* ─── Empty ─── */
+        .empty { text-align: center; padding: 2rem 1rem; color: var(--text-2); font-size: 0.85rem; }
+        .empty svg { width: 40px; height: 40px; margin-bottom: 0.75rem; opacity: 0.3; }
+
+        /* ─── Toast ─── */
+        .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+
         .toast {
+            padding: 0.75rem 1.25rem; border-radius: var(--radius); font-size: 0.85rem; font-weight: 500;
+            background: var(--bg-2); border: 1px solid var(--border);
+            animation: toastIn 0.25s ease-out; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .toast.success { border-color: var(--green); color: var(--green); }
+        .toast.warning { border-color: var(--yellow); color: var(--yellow); }
+        .toast.error { border-color: var(--red); color: var(--red); }
+        @keyframes toastIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* ─── VAD ─── */
+        .vad-indicator {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.75rem 1rem; border-radius: var(--radius); background: var(--bg-3); transition: all 0.2s;
+        }
+
+        .vad-indicator.speaking { background: var(--green-bg); border: 1px solid rgba(52,211,153,0.2); }
+        .vad-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-2); }
+        .vad-indicator.speaking .vad-dot { background: var(--green); box-shadow: 0 0 8px rgba(52,211,153,0.5); }
+
+        /* ─── Toggle ─── */
+        .toggle-row { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+
+        .toggle-row input[type="checkbox"] {
+            width: 36px; height: 20px; -webkit-appearance: none; appearance: none;
+            background: var(--bg-3); border-radius: 20px; position: relative; cursor: pointer;
+            outline: none; transition: background var(--transition); flex-shrink: 0;
+        }
+
+        .toggle-row input[type="checkbox"]::before {
+            content: ''; position: absolute; width: 16px; height: 16px;
+            border-radius: 50%; background: var(--text-2); top: 2px; left: 2px; transition: all var(--transition);
+        }
+
+        .toggle-row input[type="checkbox"]:checked { background: var(--accent); }
+        .toggle-row input[type="checkbox"]:checked::before { left: 18px; background: #fff; }
+
+        /* ─── Password ─── */
+        .password-wrapper { position: relative; }
+        .password-wrapper input { padding-right: 2.5rem; }
+
+        .password-toggle {
+            position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text-2); cursor: pointer; padding: 0.25rem;
+        }
+
+        .password-toggle:hover { color: var(--text-1); }
+
+        /* ─── Confirm Dialog ─── */
+        .dialog-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000;
+            display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+
+        .dialog {
+            background: var(--bg-2); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 1.75rem; max-width: 420px; width: 90%;
+        }
+
+        .dialog h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .dialog p { font-size: 0.85rem; color: var(--text-2); margin-bottom: 1.25rem; }
+        .dialog-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* ─── Mobile ─── */
+        .mobile-header {
+            display: none;
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--accent);
-            animation: slideIn 0.3s ease-out;
-            z-index: 1000;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+            background: var(--bg-1);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1rem;
+            height: 56px;
+            align-items: center;
         }
-        
-        .toast.success {
-            border-color: var(--success);
+
+        .mobile-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
         }
-        
-        .toast.warning {
-            border-color: var(--warning);
-            background: rgba(251, 191, 36, 0.1);
+
+        .mobile-header-brand .brand-icon { width: 26px; height: 26px; flex-shrink: 0; }
+        .mobile-header-brand span { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+
+        .mobile-ws-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            flex-shrink: 0;
+            transition: background var(--transition);
         }
-        
-        .toast.error {
-            border-color: var(--error);
+
+        .mobile-ws-dot.connected { background: var(--green); }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-1);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius);
+            flex-shrink: 0;
+            transition: background var(--transition);
+            margin-left: 0.5rem;
         }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+
+        .mobile-menu-btn:hover { background: var(--bg-hover); }
+
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;
         }
-        
+
         @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width) !important;
             }
-            
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-            
-            .broadcast-controls {
-                flex-direction: column;
-            }
+
+            .sidebar.collapsed .sidebar-toggle { display: flex; }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .mobile-header { display: flex; }
+            .app { margin-top: 56px; }
+            .content { margin-left: 0 !important; }
+            .content-inner { padding: 1.25rem 1rem 3rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .sidebar-toggle { display: none; }
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .controls-bar .btn-group { justify-content: stretch; }
+            .controls-bar .btn-group .btn { flex: 1; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1><span>🎵</span> Sistema de Anúncios Discord</h1>
-        <div id="connectionStatus" class="status-badge disconnected">
-            ⚫ A conectar...
+    <!-- Mobile Header -->
+    <div class="mobile-header" id="mobileHeader">
+        <div class="mobile-header-brand">
+            <svg class="brand-icon" viewBox="0 0 432.8 374.26" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#5865f2" d="M320.07,23.89C295.97,12.83,270.13,4.69,243.11.02c-.49-.09-.98.13-1.24.59-3.32,5.91-7,13.62-9.58,19.68-29.06-4.35-57.97-4.35-86.44,0-2.58-6.2-6.39-13.77-9.73-19.68-.25-.44-.75-.66-1.24-.59-27,4.65-52.85,12.8-76.96,23.87-.21.09-.39.24-.51.44C8.4,97.55-5.02,168.98,1.56,239.53c.03.35.22.68.49.89,32.34,23.75,63.67,38.17,94.41,47.72.49.15,1.01-.03,1.33-.44,7.27-9.93,13.76-20.4,19.31-31.42.33-.64.01-1.41-.66-1.67-10.28-3.9-20.07-8.66-29.49-14.06-.75-.44-.8-1.5-.12-2.01,1.98-1.49,3.96-3.03,5.86-4.59.34-.28.82-.35,1.22-.17,61.88,28.25,128.87,28.25,190.01,0,.4-.19.88-.13,1.24.15,1.89,1.56,3.88,3.12,5.87,4.61.69.51.64,1.58-.1,2.01-9.42,5.51-19.21,10.16-29.51,14.04-.67.26-.97,1.04-.64,1.68,5.68,11,12.16,21.47,19.3,31.4.3.42.83.6,1.33.45,30.89-9.56,62.22-23.97,94.56-47.72.28-.21.46-.53.49-.87,7.88-81.56-13.2-152.4-55.9-215.2-.1-.21-.28-.36-.49-.45ZM126.35,196.57c-18.63,0-33.98-17.1-33.98-38.11s15.05-38.11,33.98-38.11,34.28,17.25,33.98,38.11c0,21-15.05,38.11-33.98,38.11ZM251.98,196.57c-18.63,0-33.98-17.1-33.98-38.11s15.05-38.11,33.98-38.11,34.28,17.25,33.98,38.11c0,21-14.9,38.11-33.98,38.11Z"></path>
+                        <path fill="#0000c8" d="M282.87,354.63c-1.81,14.45-14.99,19.63-29.44,19.63s-24.7-11.72-22.9-26.17l6.54-58.88c1.81-14.45,14.99-26.17,29.44-26.17s42.31,0,22.9,26.17c-19.42,26.17-6.54,65.42-6.54,65.42Z"></path>
+                        <path fill="#ccd6dd" d="M432.8,249.96c0,45.15-10.1,81.77-22.57,81.77s-133.78-36.62-133.78-81.77,121.32-81.77,133.78-81.77,22.57,36.62,22.57,81.77Z"></path>
+                        <ellipse fill="#66757f" cx="410.23" cy="249.96" rx="22.57" ry="81.77"></ellipse>
+                        <path fill="#2538ff" d="M315.69,295.76l-91.59-6.54c-32.71,0-32.71-78.5,0-78.5l91.59-6.54c-19.63,19.63-19.63,71.96,0,91.59Z"></path>
+                        <ellipse fill="#99aab5" cx="403.36" cy="249.96" rx="9.81" ry="28.44"></ellipse>
+                    </svg>
+            <span>Discord PA</span>
         </div>
-    </header>
-    
-    <main>
-        <!-- Broadcast Status -->
-        <div id="broadcastStatus" class="broadcast-status">
-            <div class="broadcast-indicator">🔇</div>
-            <h2>Transmissão Inativa</h2>
-            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
-                Selecione um dispositivo de áudio e clique em Iniciar
-            </p>
-            <div class="audio-visualizer">
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-                <div class="audio-bar"></div>
-            </div>
-        </div>
-        
-        <!-- Controls -->
-        <div class="broadcast-controls">
-            <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                <label for="audioDevice">Dispositivo de Áudio</label>
-                <div style="display: flex; gap: 0.5rem;">
-                    <select id="audioDevice" style="flex: 1;">
-                        <option value="">A carregar dispositivos...</option>
-                    </select>
-                    <button id="btnRefreshDevices" class="btn btn-secondary" title="Atualizar lista de dispositivos" style="padding: 0.5rem 0.75rem;">
-                        🔄
-                    </button>
-                    <button id="btnSaveDeviceDefault" class="btn btn-secondary" title="Guardar como predefinição" style="padding: 0.5rem 0.75rem;">
-                        ⭐
-                    </button>
+        <span class="mobile-ws-dot" id="mobileWsDot"></span>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </div>
+
+    <div class="app">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg class="brand-icon" viewBox="0 0 432.8 374.26" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#5865f2" d="M320.07,23.89C295.97,12.83,270.13,4.69,243.11.02c-.49-.09-.98.13-1.24.59-3.32,5.91-7,13.62-9.58,19.68-29.06-4.35-57.97-4.35-86.44,0-2.58-6.2-6.39-13.77-9.73-19.68-.25-.44-.75-.66-1.24-.59-27,4.65-52.85,12.8-76.96,23.87-.21.09-.39.24-.51.44C8.4,97.55-5.02,168.98,1.56,239.53c.03.35.22.68.49.89,32.34,23.75,63.67,38.17,94.41,47.72.49.15,1.01-.03,1.33-.44,7.27-9.93,13.76-20.4,19.31-31.42.33-.64.01-1.41-.66-1.67-10.28-3.9-20.07-8.66-29.49-14.06-.75-.44-.8-1.5-.12-2.01,1.98-1.49,3.96-3.03,5.86-4.59.34-.28.82-.35,1.22-.17,61.88,28.25,128.87,28.25,190.01,0,.4-.19.88-.13,1.24.15,1.89,1.56,3.88,3.12,5.87,4.61.69.51.64,1.58-.1,2.01-9.42,5.51-19.21,10.16-29.51,14.04-.67.26-.97,1.04-.64,1.68,5.68,11,12.16,21.47,19.3,31.4.3.42.83.6,1.33.45,30.89-9.56,62.22-23.97,94.56-47.72.28-.21.46-.53.49-.87,7.88-81.56-13.2-152.4-55.9-215.2-.1-.21-.28-.36-.49-.45ZM126.35,196.57c-18.63,0-33.98-17.1-33.98-38.11s15.05-38.11,33.98-38.11,34.28,17.25,33.98,38.11c0,21-15.05,38.11-33.98,38.11ZM251.98,196.57c-18.63,0-33.98-17.1-33.98-38.11s15.05-38.11,33.98-38.11,34.28,17.25,33.98,38.11c0,21-14.9,38.11-33.98,38.11Z"/>
+                        <path fill="#0000c8" d="M282.87,354.63c-1.81,14.45-14.99,19.63-29.44,19.63s-24.7-11.72-22.9-26.17l6.54-58.88c1.81-14.45,14.99-26.17,29.44-26.17s42.31,0,22.9,26.17c-19.42,26.17-6.54,65.42-6.54,65.42Z"/>
+                        <path fill="#ccd6dd" d="M432.8,249.96c0,45.15-10.1,81.77-22.57,81.77s-133.78-36.62-133.78-81.77,121.32-81.77,133.78-81.77,22.57,36.62,22.57,81.77Z"/>
+                        <ellipse fill="#66757f" cx="410.23" cy="249.96" rx="22.57" ry="81.77"/>
+                        <path fill="#2538ff" d="M315.69,295.76l-91.59-6.54c-32.71,0-32.71-78.5,0-78.5l91.59-6.54c-19.63,19.63-19.63,71.96,0,91.59Z"/>
+                        <ellipse fill="#99aab5" cx="403.36" cy="249.96" rx="9.81" ry="28.44"/>
+                    </svg>
+                    <span class="brand-text">Discord PA</span>
                 </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
-                <button id="btnStart" class="btn btn-primary">
-                    ▶️ Iniciar Transmissão
-                </button>
-                <button id="btnTestTone" class="btn btn-secondary">
-                    🎵 Tom de Teste
-                </button>
-                <button id="btnStop" class="btn btn-danger" disabled>
-                    ⏹️ Parar
+                <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar" data-i18n-title="collapseSidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
                 </button>
             </div>
-        </div>
-        
-        <div class="grid">
-            <!-- Bots Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🤖 Bots Ativos</h2>
+            <div class="sidebar-nav">
+                <a class="nav-item active" href="#broadcast" data-section="broadcast">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                    <span class="nav-label" data-i18n="navBroadcast">Broadcast</span>
+                </a>
+                <a class="nav-item" href="#channels" data-section="channels">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span class="nav-label" data-i18n="navChannels">Channels</span>
+                </a>
+                <a class="nav-item" href="#tokens" data-section="tokens">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span class="nav-label" data-i18n="navTokens">Tokens / Bots</span>
+                </a>
+                <a class="nav-item" href="#settings" data-section="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span class="nav-label" data-i18n="navSettings">Settings</span>
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="en-US" onclick="setLanguage('en-US')"><span class="lang-short">EN</span><span class="lang-full">English</span></button>
+                    <button class="lang-btn" data-lang="pt-PT" onclick="setLanguage('pt-PT')"><span class="lang-short">PT</span><span class="lang-full">Português</span></button>
                 </div>
-                <div id="botList" class="bot-list">
-                    <div class="empty-state">
-                        <span>🔄</span>
-                        A carregar bots...
-                    </div>
+                <div class="ws-status">
+                    <span class="ws-dot" id="wsDot"></span>
+                    <span class="ws-label" id="wsLabel">Connecting…</span>
                 </div>
             </div>
-            
-            <!-- Channels Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">📢 Ligar a Canal</h2>
-                </div>
-                
-                <div class="form-group">
-                    <label for="selectBot">Bot</label>
-                    <select id="selectBot">
-                        <option value="">Selecione um bot</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="selectGuild">Servidor</label>
-                    <select id="selectGuild" disabled>
-                        <option value="">Selecione primeiro um bot</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="selectChannel">Canal de Voz</label>
-                    <select id="selectChannel" disabled>
-                        <option value="">Selecione primeiro um servidor</option>
-                    </select>
-                </div>
-                
-                <button id="btnJoin" class="btn btn-success" disabled style="width: 100%;">
-                    🔊 Entrar no Canal
-                </button>
-                
-                <button id="btnSetPreset" class="btn btn-secondary" disabled style="width: 100%; margin-top: 0.5rem;">
-                    ⭐ Guardar como Predefinição
-                </button>
-            </div>
-            
-            <!-- Presets Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">⭐ Canais Predefinidos</h2>
-                </div>
-                
-                <div id="presetList" class="channel-list" style="margin-bottom: 1rem;">
-                    <div class="empty-state" style="padding: 1rem;">
-                        <span style="font-size: 2rem;">⭐</span>
-                        <p>Nenhuma predefinição guardada</p>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">
-                            Selecione um bot, servidor e canal, depois clique em "Guardar como Predefinição"
-                        </p>
-                    </div>
-                </div>
-                
-                <div style="display: flex; gap: 0.5rem;">
-                    <button id="btnJoinAllPresets" class="btn btn-primary" style="flex: 1;">
-                        🚀 Entrar em Todos
-                    </button>
-                    <button id="btnLeaveAll" class="btn btn-danger" style="flex: 1;">
-                        🚪 Sair de Todos
-                    </button>
-                </div>
-            </div>
-            
-            <!-- VAD Settings Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">🎤 Deteção de Voz (VAD)</h2>
-                </div>
-                
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
-                    Quando ativado, os bots só mostram o indicador "a falar" quando há som no áudio.
-                </p>
-                
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="vadEnabled" checked style="width: 18px; height: 18px; accent-color: var(--accent);">
-                        <span>Ativar deteção de atividade de voz</span>
-                    </label>
-                </div>
-                
-                <div class="form-group">
-                    <label for="vadThreshold">Threshold de silêncio: <span id="vadThresholdValue">1</span></label>
-                    <input type="range" id="vadThreshold" min="1" max="500" value="1" 
-                           style="width: 100%; accent-color: var(--accent);">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
-                        <span>Só silêncio absoluto</span>
-                        <span>Ruído leve = silêncio</span>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="vadSilenceTimeout">Tempo de silêncio: <span id="vadSilenceTimeoutValue">500</span>ms</label>
-                    <input type="range" id="vadSilenceTimeout" min="200" max="2000" value="500" step="100"
-                           style="width: 100%; accent-color: var(--accent);">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary);">
-                        <span>Reativo (200ms)</span>
-                        <span>Lento (2s)</span>
-                    </div>
-                </div>
-                
-                <div id="vadStatus" style="padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; text-align: center;">
-                    <span id="vadIndicator" style="font-size: 1.5rem;">🔇</span>
-                    <span id="vadStatusText" style="margin-left: 0.5rem;">Silêncio</span>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <script>
-        // WebSocket connection
-        let ws;
-        let state = {
-            bots: [],
-            audioDevice: null,
-            isBroadcasting: false,
-            audioDevices: [],
-            presetChannels: []
-        };
-        let guilds = [];
-        let channels = [];
-        
-        function connect() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}`);
-            
-            ws.onopen = () => {
-                console.log('WebSocket conectado');
-                updateConnectionStatus(true);
-                send({ type: 'getState' });
-            };
-            
-            ws.onmessage = (event) => {
-                const message = JSON.parse(event.data);
-                handleMessage(message);
-            };
-            
-            ws.onclose = () => {
-                console.log('WebSocket desconectado');
-                updateConnectionStatus(false);
-                setTimeout(connect, 3000);
-            };
-            
-            ws.onerror = (error) => {
-                console.error('Erro WebSocket:', error);
-            };
-        }
-        
-        function send(data) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(data));
-            }
-        }
-        
-        function handleMessage(message) {
-            switch (message.type) {
-                case 'state':
-                    state = message;
-                    updateUI();
-                    break;
-                case 'guilds':
-                    guilds = message.guilds;
-                    updateGuildSelect();
-                    break;
-                case 'channels':
-                    channels = message.channels;
-                    updateChannelSelect();
-                    break;
-                case 'audioDevices':
-                    state.audioDevices = message.devices;
-                    updateAudioDevices();
-                    break;
-                case 'presetChannels':
-                    state.presetChannels = message.presets;
-                    updatePresetList();
-                    break;
-                case 'joinAllPresetsResult':
-                    const successCount = message.results.filter(r => r.success).length;
-                    const failCount = message.results.filter(r => !r.success).length;
-                    if (failCount > 0) {
-                        showToast(`Entrou em ${successCount} canais, ${failCount} falharam`, 'warning');
-                    } else {
-                        showToast(`Entrou em ${successCount} canais!`, 'success');
-                    }
-                    break;
-                case 'warning':
-                    showToast(message.message, 'warning');
-                    break;
-                case 'error':
-                    showToast(message.message, 'error');
-                    break;
-                case 'speakingChange':
-                    updateVadIndicator(message.speaking);
-                    break;
-            }
-        }
-        
-        function updateConnectionStatus(connected) {
-            const el = document.getElementById('connectionStatus');
-            if (connected) {
-                el.className = 'status-badge connected';
-                el.textContent = '🟢 Conectado';
-            } else {
-                el.className = 'status-badge disconnected';
-                el.textContent = '🔴 Desconectado';
-            }
-        }
-        
-        function updateUI() {
-            updateBroadcastStatus();
-            updateBotList();
-            updateAudioDevices();
-            updateBotSelect();
-            updatePresetList();
-            updateVadSettings();
-        }
-        
-        function updateVadSettings() {
-            const vad = state.vad || {};
-            const vadEnabled = document.getElementById('vadEnabled');
-            const vadThreshold = document.getElementById('vadThreshold');
-            const vadThresholdValue = document.getElementById('vadThresholdValue');
-            const vadSilenceTimeout = document.getElementById('vadSilenceTimeout');
-            const vadSilenceTimeoutValue = document.getElementById('vadSilenceTimeoutValue');
-            
-            if (vadEnabled) vadEnabled.checked = vad.enabled !== false;
-            if (vadThreshold) vadThreshold.value = vad.threshold || 50;
-            if (vadThresholdValue) vadThresholdValue.textContent = vad.threshold || 50;
-            if (vadSilenceTimeout) vadSilenceTimeout.value = vad.silenceTimeout || 500;
-            if (vadSilenceTimeoutValue) vadSilenceTimeoutValue.textContent = vad.silenceTimeout || 500;
-            
-            updateVadIndicator(vad.isSpeaking);
-        }
-        
-        function updateVadIndicator(speaking) {
-            const indicator = document.getElementById('vadIndicator');
-            const statusText = document.getElementById('vadStatusText');
-            const statusDiv = document.getElementById('vadStatus');
-            
-            if (indicator && statusText && statusDiv) {
-                if (speaking) {
-                    indicator.textContent = '🎤';
-                    statusText.textContent = 'A falar';
-                    statusDiv.style.background = 'rgba(69, 233, 165, 0.2)';
-                    statusDiv.style.border = '1px solid var(--accent)';
-                } else {
-                    indicator.textContent = '🔇';
-                    statusText.textContent = 'Silêncio';
-                    statusDiv.style.background = 'var(--bg-tertiary)';
-                    statusDiv.style.border = 'none';
-                }
-            }
-        }
-        
-        function updateBroadcastStatus() {
-            const el = document.getElementById('broadcastStatus');
-            const btnStart = document.getElementById('btnStart');
-            const btnTestTone = document.getElementById('btnTestTone');
-            const btnStop = document.getElementById('btnStop');
-            
-            const activeConnections = state.activeConnections || 0;
-            const hasConnections = activeConnections > 0;
-            
-            if (state.isBroadcasting) {
-                el.className = 'broadcast-status active';
-                el.querySelector('.broadcast-indicator').textContent = '🔊';
-                el.querySelector('h2').textContent = 'A Transmitir...';
-                el.querySelector('p').textContent = `Áudio a ser transmitido para ${activeConnections} canal(is)`;
-                btnStart.disabled = true;
-                btnTestTone.disabled = true;
-                btnStop.disabled = false;
-            } else {
-                el.className = 'broadcast-status';
-                el.querySelector('.broadcast-indicator').textContent = '🔇';
-                el.querySelector('h2').textContent = 'Transmissão Inativa';
-                
-                if (!hasConnections) {
-                    el.querySelector('p').textContent = '⚠️ Conecte pelo menos um bot a um canal de voz';
-                    el.querySelector('p').style.color = 'var(--warning)';
-                } else {
-                    el.querySelector('p').textContent = `${activeConnections} bot(s) conectado(s) - Pronto para transmitir`;
-                    el.querySelector('p').style.color = 'var(--text-secondary)';
-                }
-                
-                btnStart.disabled = !hasConnections;
-                btnTestTone.disabled = !hasConnections;
-                btnStop.disabled = true;
-            }
-        }
-        
-        function updateBotList() {
-            const container = document.getElementById('botList');
-            
-            if (!state.bots || state.bots.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <span>🤖</span>
-                        Nenhum bot configurado
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = state.bots.map(bot => `
-                <div class="bot-card">
-                    <div class="bot-avatar">
-                        ${bot.avatar 
-                            ? `<img src="${bot.avatar}" alt="${bot.username}">`
-                            : '🤖'
-                        }
-                    </div>
-                    <div class="bot-info">
-                        <div class="bot-name">${bot.username || 'A carregar...'}</div>
-                        <div class="bot-status ${bot.ready ? 'online' : ''}">
-                            ${bot.ready ? '🟢 Online' : '🔴 Offline'}
+        </nav>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="content-inner">
+
+                <!-- ═══ SECTION: Transmissão ═══ -->
+                <section class="section" id="broadcast">
+                    <h2 class="section-title" data-i18n="broadcastTitle">Broadcast</h2>
+                    <p class="section-subtitle" data-i18n="broadcastSubtitle">Control the audio broadcast to Discord voice channels.</p>
+
+                    <div id="broadcastHero" class="broadcast-hero">
+                        <div class="broadcast-icon" id="broadcastIcon">🔇</div>
+                        <div class="broadcast-title" id="broadcastTitle" data-i18n="broadcastInactive">Inactive</div>
+                        <div class="broadcast-sub" id="broadcastSub" data-i18n="broadcastSelectDevice">Select a device and click Start</div>
+                        <div class="audio-wave">
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
                         </div>
-                        ${bot.connections && bot.connections.length > 0 ? `
-                            <div class="connection-list">
-                                ${bot.connections.map(conn => `
-                                    <div class="connection-item">
-                                        <div class="connection-info">
-                                            <span>🔊 ${conn.channelName}</span>
-                                            <span class="connection-guild">${conn.guildName}</span>
-                                        </div>
-                                        <button class="btn btn-secondary" 
-                                                onclick="leaveChannel(${bot.index}, '${conn.guildId}')"
-                                                style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                                            ❌ Sair
-                                        </button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
                     </div>
-                </div>
-            `).join('');
-        }
-        
-        function updateAudioDevices() {
-            const select = document.getElementById('audioDevice');
-            const indicator = document.getElementById('deviceDefaultIndicator');
-            const devices = state.audioDevices || [];
-            const currentDevice = state.audioDevice;
-            const defaultDevice = state.defaultAudioDevice;
-            
-            select.innerHTML = devices.length > 0
-                ? devices.map(d => {
-                    const typeIcon = d.isRecording ? '🎤' : '🔊';
-                    const typeName = d.isRecording ? 'Gravação' : 'Reprodução';
-                    const isDefault = d.id === defaultDevice;
-                    const defaultMark = isDefault ? '⭐ ' : '';
-                    return `
-                        <option value="${d.id}" ${currentDevice && currentDevice.id === d.id ? 'selected' : ''}>
-                            ${defaultMark}${typeIcon} ${d.name} (${typeName})
-                        </option>
-                    `;
-                }).join('')
-                : '<option value="">Nenhum dispositivo disponível</option>';
-            
-            // Mostrar indicador se dispositivo atual é o predefinido
-            if (indicator) {
-                if (currentDevice && currentDevice.id === defaultDevice) {
-                    indicator.style.display = 'block';
-                } else {
-                    indicator.style.display = 'none';
-                }
-            }
-        }
-        
-        function updateBotSelect() {
-            const select = document.getElementById('selectBot');
-            const bots = state.bots || [];
-            
-            select.innerHTML = '<option value="">Selecione um bot</option>' +
-                bots.filter(b => b.ready).map(b => `
-                    <option value="${b.index}">${b.username}</option>
-                `).join('');
-        }
-        
-        function updateGuildSelect() {
-            const select = document.getElementById('selectGuild');
-            
-            select.innerHTML = '<option value="">Selecione um servidor</option>' +
-                guilds.map(g => `
-                    <option value="${g.id}">${g.name}</option>
-                `).join('');
-            
-            select.disabled = guilds.length === 0;
-        }
-        
-        function updateChannelSelect() {
-            const select = document.getElementById('selectChannel');
-            const btnJoin = document.getElementById('btnJoin');
-            const btnSetPreset = document.getElementById('btnSetPreset');
-            
-            select.innerHTML = '<option value="">Selecione um canal</option>' +
-                channels.map(c => `
-                    <option value="${c.id}">${c.name} (${c.memberCount} membros)</option>
-                `).join('');
-            
-            select.disabled = channels.length === 0;
-            btnJoin.disabled = channels.length === 0;
-            btnSetPreset.disabled = channels.length === 0;
-        }
-        
-        function updatePresetList() {
-            const container = document.getElementById('presetList');
-            const presets = state.presetChannels || [];
-            
-            if (presets.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state" style="padding: 1rem;">
-                        <span style="font-size: 2rem;">⭐</span>
-                        <p>Nenhuma predefinição guardada</p>
-                        <p style="font-size: 0.8rem; color: var(--text-secondary);">
-                            Selecione um bot, servidor e canal, depois clique em "Guardar como Predefinição"
+
+                    <div class="controls-bar">
+                        <div class="form-group">
+                            <label for="audioDevice" data-i18n="audioDeviceLabel">Audio device</label>
+                            <div style="display:flex;gap:0.4rem;">
+                                <select id="audioDevice" style="flex:1;"><option value="" data-i18n="loading">Loading…</option></select>
+                                <button class="btn btn-ghost btn-icon" id="btnRefreshDevices" title="Refresh devices" data-i18n-title="refreshDevices">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                </button>
+                                <button class="btn btn-ghost btn-icon" id="btnSaveDeviceDefault" title="Save as default" data-i18n-title="saveAsDefault">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="btnStart">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                <span data-i18n="btnStart">Start</span>
+                            </button>
+                            <button class="btn btn-ghost" id="btnTestTone">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                                <span data-i18n="btnTest">Test</span>
+                            </button>
+                            <button class="btn btn-danger" id="btnStop" disabled>
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><rect x="6" y="6" width="12" height="12" rx="1"></rect></svg>
+                                <span data-i18n="btnStop">Stop</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title" data-i18n="activeBots">Active Bots</span>
+                                <span class="card-badge green" id="botCountBadge">0</span>
+                            </div>
+                            <div id="botList"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title" data-i18n="presetChannels">Preset Channels</span>
+                            </div>
+                            <div id="presetListBroadcast"></div>
+                            <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+                                <button class="btn btn-primary btn-sm" style="flex:1;" id="btnJoinAllPresets" data-i18n="joinAll">Join All</button>
+                                <button class="btn btn-danger btn-sm" style="flex:1;" id="btnLeaveAll" data-i18n="leaveAll">Leave All</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="section-divider">
+
+                <!-- ═══ SECTION: Canais ═══ -->
+                <section class="section" id="channels">
+                    <h2 class="section-title" data-i18n="channelsTitle">Channels</h2>
+                    <p class="section-subtitle" data-i18n="channelsSubtitle">Connect bots to voice channels and manage presets.</p>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><span class="card-title" data-i18n="connectToChannel">Connect to Channel</span></div>
+                            <div class="form-group">
+                                <label for="selectBot" data-i18n="botLabel">Bot</label>
+                                <select id="selectBot"><option value="" data-i18n="selectABot">Select a bot</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectGuild" data-i18n="serverLabel">Server</label>
+                                <select id="selectGuild" disabled><option value="" data-i18n="selectBotFirst">Select a bot first</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="selectChannel" data-i18n="voiceChannelLabel">Voice Channel</label>
+                                <select id="selectChannel" disabled><option value="" data-i18n="selectServerFirst">Select a server first</option></select>
+                            </div>
+                            <div style="display:flex;gap:0.5rem;">
+                                <button class="btn btn-success" style="flex:1;" id="btnJoin" disabled data-i18n="joinChannel">Join Channel</button>
+                                <button class="btn btn-ghost" id="btnSetPreset" disabled>⭐ <span data-i18n="preset">Preset</span></button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><span class="card-title" data-i18n="savedPresets">Saved Presets</span></div>
+                            <div id="presetListChannel"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <hr class="section-divider">
+
+                <!-- ═══ SECTION: Tokens ═══ -->
+                <section class="section" id="tokens">
+                    <h2 class="section-title" data-i18n="tokensTitle">Tokens / Bots</h2>
+                    <p class="section-subtitle" data-i18n="tokensSubtitle">Add or remove Discord bot tokens. Tokens are saved persistently.</p>
+
+                    <div class="card">
+                        <div class="card-header"><span class="card-title" data-i18n="addNewBot">Add New Bot</span></div>
+                        <div class="form-group">
+                            <label for="newToken" data-i18n="botTokenLabel">Bot Token</label>
+                            <div class="form-row">
+                                <div class="password-wrapper" style="flex:1;">
+                                    <input type="password" id="newToken" placeholder="Paste bot token here…" data-i18n-placeholder="pasteTokenPlaceholder">
+                                    <button class="password-toggle" id="toggleTokenVis" type="button">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </button>
+                                </div>
+                                <button class="btn btn-primary" id="btnAddToken">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    <span data-i18n="btnAdd">Add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <p style="font-size:0.78rem;color:var(--text-2);" data-i18n="tokenSecurityNote">
+                            The token is saved locally in config.json. Never share tokens with third parties.
                         </p>
                     </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = presets.map(p => `
-                <div class="channel-item">
-                    <div class="channel-name">
-                        <span>🤖 ${p.botName}</span>
-                        <span style="color: var(--text-secondary); font-size: 0.8rem;">
-                            ${p.guildName} → ${p.channelName}
-                        </span>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title" data-i18n="configuredBots">Configured Bots</span>
+                            <span class="card-badge green" id="tokenCountBadge">0</span>
+                        </div>
+                        <div id="tokenList"></div>
                     </div>
-                    <button class="btn btn-secondary" 
-                            onclick="removePreset(${p.botIndex}, '${p.guildId}')"
-                            style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                        ❌
-                    </button>
+                </section>
+
+                <hr class="section-divider">
+
+                <!-- ═══ SECTION: Definições ═══ -->
+                <section class="section" id="settings">
+                    <h2 class="section-title" data-i18n="settingsTitle">Settings</h2>
+                    <p class="section-subtitle" data-i18n="settingsSubtitle">Configure voice detection and other parameters.</p>
+
+                    <div class="card">
+                        <div class="card-header"><span class="card-title" data-i18n="vadTitle">Voice Activity Detection (VAD)</span></div>
+                        <p style="font-size:0.82rem;color:var(--text-2);margin-bottom:1rem;" data-i18n="vadDescription">
+                            When enabled, bots only show "speaking" when there is actual sound in the captured audio.
+                        </p>
+
+                        <div class="form-group">
+                            <label class="toggle-row">
+                                <input type="checkbox" id="vadEnabled" checked>
+                                <span style="font-size:0.85rem;color:var(--text-0);" data-i18n="vadEnableLabel">Enable voice activity detection</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vadThreshold"><span data-i18n="vadThresholdLabel">Silence threshold:</span> <strong id="vadThresholdValue">1</strong></label>
+                            <input type="range" id="vadThreshold" min="1" max="500" value="1">
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-2);margin-top:0.2rem;">
+                                <span data-i18n="vadThresholdMin">Absolute silence only</span><span data-i18n="vadThresholdMax">Light noise = silence</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="vadSilenceTimeout"><span data-i18n="vadTimeoutLabel">Silence timeout:</span> <strong id="vadSilenceTimeoutValue">500</strong> ms</label>
+                            <input type="range" id="vadSilenceTimeout" min="200" max="2000" step="100" value="500">
+                            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-2);margin-top:0.2rem;">
+                                <span data-i18n="vadTimeoutMin">Reactive (200ms)</span><span data-i18n="vadTimeoutMax">Slow (2s)</span>
+                            </div>
+                        </div>
+
+                        <div class="vad-indicator" id="vadStatus">
+                            <span class="vad-dot"></span>
+                            <span id="vadStatusText" style="font-size:0.85rem;" data-i18n="vadSilence">Silence</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+    // ───── Translations ─────
+    const translations = {
+        'en-US': {
+            // Nav
+            navBroadcast: 'Broadcast', navChannels: 'Channels', navTokens: 'Tokens / Bots', navSettings: 'Settings',
+            collapseSidebar: 'Collapse sidebar',
+            wsConnected: 'Connected', wsDisconnected: 'Disconnected', wsConnecting: 'Connecting…',
+            // Broadcast
+            broadcastTitle: 'Broadcast', broadcastSubtitle: 'Control the audio broadcast to Discord voice channels.',
+            broadcastInactive: 'Inactive', broadcastActive: 'Broadcasting',
+            broadcastSelectDevice: 'Select a device and click Start',
+            broadcastChannelCount: 'Audio being broadcast to {0} channel(s)',
+            broadcastReady: '{0} bot(s) connected — ready to broadcast',
+            broadcastConnectFirst: 'Connect at least one bot to a voice channel',
+            audioDeviceLabel: 'Audio device', refreshDevices: 'Refresh devices', saveAsDefault: 'Save as default',
+            btnStart: 'Start', btnTest: 'Test', btnStop: 'Stop',
+            activeBots: 'Active Bots', presetChannels: 'Preset Channels',
+            joinAll: 'Join All', leaveAll: 'Leave All',
+            // Channels
+            channelsTitle: 'Channels', channelsSubtitle: 'Connect bots to voice channels and manage presets.',
+            connectToChannel: 'Connect to Channel',
+            botLabel: 'Bot', serverLabel: 'Server', voiceChannelLabel: 'Voice Channel',
+            selectABot: 'Select a bot', selectBotFirst: 'Select a bot first', selectServerFirst: 'Select a server first',
+            selectAServer: 'Select a server', selectAChannel: 'Select a channel',
+            joinChannel: 'Join Channel', preset: 'Preset', savedPresets: 'Saved Presets',
+            // Tokens
+            tokensTitle: 'Tokens / Bots', tokensSubtitle: 'Add or remove Discord bot tokens. Tokens are saved persistently.',
+            addNewBot: 'Add New Bot', botTokenLabel: 'Bot Token',
+            pasteTokenPlaceholder: 'Paste bot token here…',
+            btnAdd: 'Add', btnAdding: 'Adding…', btnRemove: 'Remove',
+            tokenSecurityNote: 'The token is saved locally in config.json. Never share tokens with third parties.',
+            configuredBots: 'Configured Bots',
+            // Settings
+            settingsTitle: 'Settings', settingsSubtitle: 'Configure voice detection and other parameters.',
+            vadTitle: 'Voice Activity Detection (VAD)',
+            vadDescription: 'When enabled, bots only show "speaking" when there is actual sound in the captured audio.',
+            vadEnableLabel: 'Enable voice activity detection',
+            vadThresholdLabel: 'Silence threshold:', vadThresholdMin: 'Absolute silence only', vadThresholdMax: 'Light noise = silence',
+            vadTimeoutLabel: 'Silence timeout:', vadTimeoutMin: 'Reactive (200ms)', vadTimeoutMax: 'Slow (2s)',
+            vadSilence: 'Silence', vadSpeaking: 'Speaking',
+            // Dynamic / Toast messages
+            loading: 'Loading…', online: 'Online', offline: 'Offline', leave: 'Leave',
+            noBotsConfigured: 'No bots configured.', addTokensHint: 'Add tokens in the Tokens / Bots section.',
+            noPresetsConfigured: 'No presets saved.',
+            noTokensConfigured: 'No tokens configured.', addTokenAbove: 'Add a token above to get started.',
+            noDevicesAvailable: 'No devices available',
+            members: 'members',
+            // Toasts
+            testToneStarted: 'Test tone started (10s)', refreshingDevices: 'Refreshing devices…',
+            deviceSavedAsDefault: 'Device saved as default', joiningPresets: 'Joining preset channels…',
+            joiningChannel: 'Joining channel…', presetSaved: 'Preset saved!',
+            pasteValidToken: 'Paste a valid token',
+            joinedChannels: 'Joined {0} channels, {1} failed', joinedAllChannels: 'Joined {0} channels!',
+            // Server messages (from WebSocket)
+            tokenCannotBeEmpty: 'Token cannot be empty',
+            botAddedSuccessfully: 'Bot added successfully!',
+            invalidBotIndex: 'Invalid bot index',
+            noBotConnectedToVoiceChannel: 'No bot is connected to a voice channel!',
+            errorAddingBot: 'Error adding bot: {0}', errorRemovingBot: 'Error removing bot: {0}',
+            removedSuccessfully: 'removed successfully',
+            // Dialog
+            dialogRemoveBot: 'Remove Bot',
+            dialogRemoveConfirm: 'Are you sure you want to remove <strong>{0}</strong>? The bot will be disconnected from all channels and the token will be removed from the configuration.',
+            dialogCancel: 'Cancel', dialogRemove: 'Remove',
+        },
+        'pt-PT': {
+            // Nav
+            navBroadcast: 'Transmissão', navChannels: 'Canais', navTokens: 'Tokens / Bots', navSettings: 'Definições',
+            collapseSidebar: 'Colapsar sidebar',
+            wsConnected: 'Conectado', wsDisconnected: 'Desconectado', wsConnecting: 'A conectar…',
+            // Broadcast
+            broadcastTitle: 'Transmissão', broadcastSubtitle: 'Controle a transmissão de áudio para os canais de voz do Discord.',
+            broadcastInactive: 'Inativa', broadcastActive: 'A Transmitir',
+            broadcastSelectDevice: 'Selecione um dispositivo e clique em Iniciar',
+            broadcastChannelCount: 'Áudio a ser transmitido para {0} canal(is)',
+            broadcastReady: '{0} bot(s) conectado(s) — pronto para transmitir',
+            broadcastConnectFirst: 'Conecte pelo menos um bot a um canal de voz',
+            audioDeviceLabel: 'Dispositivo de áudio', refreshDevices: 'Atualizar dispositivos', saveAsDefault: 'Guardar como predefinição',
+            btnStart: 'Iniciar', btnTest: 'Teste', btnStop: 'Parar',
+            activeBots: 'Bots Ativos', presetChannels: 'Canais Predefinidos',
+            joinAll: 'Entrar em Todos', leaveAll: 'Sair de Todos',
+            // Channels
+            channelsTitle: 'Canais', channelsSubtitle: 'Ligue bots a canais de voz e gerencie predefinições.',
+            connectToChannel: 'Ligar a Canal',
+            botLabel: 'Bot', serverLabel: 'Servidor', voiceChannelLabel: 'Canal de Voz',
+            selectABot: 'Selecione um bot', selectBotFirst: 'Selecione primeiro um bot', selectServerFirst: 'Selecione primeiro um servidor',
+            selectAServer: 'Selecione um servidor', selectAChannel: 'Selecione um canal',
+            joinChannel: 'Entrar no Canal', preset: 'Predefinir', savedPresets: 'Predefinições Guardadas',
+            // Tokens
+            tokensTitle: 'Tokens / Bots', tokensSubtitle: 'Adicione ou remova tokens de bot Discord. Os tokens são guardados de forma persistente.',
+            addNewBot: 'Adicionar Novo Bot', botTokenLabel: 'Token do Bot',
+            pasteTokenPlaceholder: 'Cole o token do bot aqui…',
+            btnAdd: 'Adicionar', btnAdding: 'A adicionar…', btnRemove: 'Remover',
+            tokenSecurityNote: 'O token é guardado localmente no ficheiro config.json. Nunca partilhe tokens com terceiros.',
+            configuredBots: 'Bots Configurados',
+            // Settings
+            settingsTitle: 'Definições', settingsSubtitle: 'Configure a deteção de voz e outros parâmetros.',
+            vadTitle: 'Deteção de Atividade de Voz (VAD)',
+            vadDescription: 'Quando ativado, os bots só indicam "a falar" quando há som real no áudio capturado.',
+            vadEnableLabel: 'Ativar deteção de atividade de voz',
+            vadThresholdLabel: 'Threshold de silêncio:', vadThresholdMin: 'Só silêncio absoluto', vadThresholdMax: 'Ruído leve = silêncio',
+            vadTimeoutLabel: 'Tempo de silêncio:', vadTimeoutMin: 'Reativo (200ms)', vadTimeoutMax: 'Lento (2s)',
+            vadSilence: 'Silêncio', vadSpeaking: 'A falar',
+            // Dynamic / Toast messages
+            loading: 'A carregar…', online: 'Online', offline: 'Offline', leave: 'Sair',
+            noBotsConfigured: 'Nenhum bot configurado.', addTokensHint: 'Adicione tokens na secção Tokens / Bots.',
+            noPresetsConfigured: 'Nenhuma predefinição guardada.',
+            noTokensConfigured: 'Nenhum token configurado.', addTokenAbove: 'Adicione um token acima para começar.',
+            noDevicesAvailable: 'Nenhum dispositivo disponível',
+            members: 'membros',
+            // Toasts
+            testToneStarted: 'Tom de teste iniciado (10s)', refreshingDevices: 'A atualizar dispositivos…',
+            deviceSavedAsDefault: 'Dispositivo guardado como predefinição', joiningPresets: 'A entrar nos canais predefinidos…',
+            joiningChannel: 'A entrar no canal…', presetSaved: 'Predefinição guardada!',
+            pasteValidToken: 'Cole um token válido',
+            joinedChannels: 'Entrou em {0} canais, {1} falharam', joinedAllChannels: 'Entrou em {0} canais!',
+            // Server messages (from WebSocket)
+            tokenCannotBeEmpty: 'Token não pode estar vazio',
+            botAddedSuccessfully: 'Bot adicionado com sucesso!',
+            invalidBotIndex: 'Índice de bot inválido',
+            noBotConnectedToVoiceChannel: 'Nenhum bot está conectado a um canal de voz!',
+            errorAddingBot: 'Erro ao adicionar bot: {0}', errorRemovingBot: 'Erro ao remover bot: {0}',
+            removedSuccessfully: 'removido com sucesso',
+            // Dialog
+            dialogRemoveBot: 'Remover Bot',
+            dialogRemoveConfirm: 'Tem a certeza que deseja remover <strong>{0}</strong>? O bot será desconectado de todos os canais e o token será removido da configuração.',
+            dialogCancel: 'Cancelar', dialogRemove: 'Remover',
+        }
+    };
+
+    let currentLang = localStorage.getItem('discord-pa-lang') || 'en-US';
+
+    function t(key, ...args) {
+        let str = (translations[currentLang] && translations[currentLang][key]) || translations['en-US'][key] || key;
+        args.forEach((v, i) => { str = str.replace(`{${i}}`, v); });
+        return str;
+    }
+
+    // Translate a server message key (may contain data after colon)
+    function tMsg(raw) {
+        if (!raw) return raw;
+        // Check for pattern "key:data"  
+        const colonIdx = raw.indexOf(':');
+        if (colonIdx > 0) {
+            const key = raw.substring(0, colonIdx);
+            const data = raw.substring(colonIdx + 1);
+            if (translations['en-US'][key]) return t(key, data);
+            // "errorAddingBot:msg" or "errorRemovingBot:msg"  
+            if (key === 'errorAddingBot') return t('errorAddingBot', data);
+            if (key === 'errorRemovingBot') return t('errorRemovingBot', data);
+            if (key === 'botRemovedSuccessfully') return `${data} ${t('removedSuccessfully')}`;
+        }
+        // Direct key lookup
+        if (translations['en-US'][raw]) return t(raw);
+        // Fallback: return raw
+        return raw;
+    }
+
+    function applyStaticTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations['en-US'][key]) el.textContent = t(key);
+        });
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            if (translations['en-US'][key]) el.title = t(key);
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations['en-US'][key]) el.placeholder = t(key);
+        });
+        document.documentElement.lang = currentLang;
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('discord-pa-lang', lang);
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+        applyStaticTranslations();
+        updateUI();
+    }
+
+    // ───── State ─────
+    let ws;
+    let state = { bots: [], audioDevice: null, isBroadcasting: false, audioDevices: [], presetChannels: [], tokens: [] };
+
+    // ───── Guild / Channel Cache ─────
+    // guildCache[botIndex] = [ {id, name}, ... ]
+    // channelCache["botIndex_guildId"] = [ {id, name, memberCount}, ... ]
+    const guildCache = {};
+    const channelCache = {};
+    let currentBotIndex = null;
+    let currentGuildId = null;
+    let pendingGuildRestore = null;
+    let pendingChannelRestore = null;
+
+    // ───── Sidebar collapse ─────
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+    if (localStorage.getItem('sidebarCollapsed') === '1') {
+        sidebar.classList.add('collapsed');
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed') ? '1' : '0');
+    });
+
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+    });
+
+    document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+    });
+
+    // ───── Active section tracking ─────
+    const sections = document.querySelectorAll('.section');
+    const navItems = document.querySelectorAll('.sidebar .nav-item[data-section]');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id;
+                navItems.forEach(n => n.classList.toggle('active', n.dataset.section === id));
+            }
+        });
+    }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+
+    // ───── WebSocket ─────
+    function connect() {
+        const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${proto}//${location.host}`);
+        ws.onopen = () => { updateWsStatus(true); send({ type: 'getState' }); };
+        ws.onmessage = e => handleMessage(JSON.parse(e.data));
+        ws.onclose = () => { updateWsStatus(false); setTimeout(connect, 3000); };
+        ws.onerror = () => {};
+    }
+
+    function send(data) {
+        if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(data));
+    }
+
+    function handleMessage(msg) {
+        switch (msg.type) {
+            case 'state':
+                state = msg;
+                updateUI();
+                break;
+            case 'guilds':
+                if (currentBotIndex !== null) {
+                    guildCache[currentBotIndex] = msg.guilds;
+                }
+                updateGuildSelect(msg.guilds, pendingGuildRestore);
+                pendingGuildRestore = null;
+                break;
+            case 'channels':
+                if (currentBotIndex !== null && msg.guildId) {
+                    channelCache[currentBotIndex + '_' + msg.guildId] = msg.channels;
+                }
+                updateChannelSelect(msg.channels, pendingChannelRestore);
+                pendingChannelRestore = null;
+                break;
+            case 'audioDevices':
+                state.audioDevices = msg.devices;
+                updateAudioDevices();
+                break;
+            case 'tokens':
+                state.tokens = msg.tokens;
+                updateTokenList();
+                break;
+            case 'joinAllPresetsResult':
+                const ok = msg.results.filter(r => r.success).length;
+                const fail = msg.results.filter(r => !r.success).length;
+                showToast(fail > 0 ? t('joinedChannels', ok, fail) : t('joinedAllChannels', ok), fail > 0 ? 'warning' : 'success');
+                break;
+            case 'warning': showToast(tMsg(msg.message), 'warning'); break;
+            case 'error': showToast(tMsg(msg.message), 'error'); break;
+            case 'success': showToast(tMsg(msg.message), 'success'); break;
+            case 'speakingChange': updateVadIndicator(msg.speaking); break;
+        }
+    }
+
+    function updateWsStatus(connected) {
+        document.getElementById('wsDot').className = 'ws-dot' + (connected ? ' connected' : '');
+        document.getElementById('wsLabel').textContent = connected ? t('wsConnected') : t('wsDisconnected');
+        const mobileDot = document.getElementById('mobileWsDot');
+        if (mobileDot) mobileDot.className = 'mobile-ws-dot' + (connected ? ' connected' : '');
+    }
+
+    // ───── UI Updates ─────
+    function updateUI() {
+        updateBroadcastHero();
+        updateBotList();
+        updateAudioDevices();
+        updateBotSelect();
+        updatePresetList();
+        updateTokenList();
+        updateVadSettings();
+    }
+
+    function updateBroadcastHero() {
+        const hero = document.getElementById('broadcastHero');
+        const icon = document.getElementById('broadcastIcon');
+        const title = document.getElementById('broadcastTitle');
+        const sub = document.getElementById('broadcastSub');
+        const ac = state.activeConnections || 0;
+
+        if (state.isBroadcasting) {
+            hero.classList.add('active');
+            icon.textContent = '🔊';
+            title.textContent = t('broadcastActive');
+            sub.textContent = t('broadcastChannelCount', ac);
+            document.getElementById('btnStart').disabled = true;
+            document.getElementById('btnTestTone').disabled = true;
+            document.getElementById('btnStop').disabled = false;
+        } else {
+            hero.classList.remove('active');
+            icon.textContent = '🔇';
+            title.textContent = t('broadcastInactive');
+            sub.textContent = ac > 0 ? t('broadcastReady', ac) : t('broadcastConnectFirst');
+            sub.style.color = ac > 0 ? '' : 'var(--yellow)';
+            document.getElementById('btnStart').disabled = ac === 0;
+            document.getElementById('btnTestTone').disabled = ac === 0;
+            document.getElementById('btnStop').disabled = true;
+        }
+    }
+
+    function updateBotList() {
+        const el = document.getElementById('botList');
+        const bots = state.bots || [];
+        document.getElementById('botCountBadge').textContent = bots.length;
+
+        if (!bots.length) {
+            el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><p>${t('noBotsConfigured')}<br>${t('addTokensHint')}</p></div>`;
+            return;
+        }
+
+        el.innerHTML = bots.map(b => `
+            <div class="bot-item">
+                <div class="bot-avatar">${b.avatar ? `<img src="${b.avatar}" alt="">` : '🤖'}</div>
+                <div class="bot-meta">
+                    <div class="bot-name">${b.username || t('loading')}</div>
+                    <div class="bot-tag"><span class="online-dot ${b.ready ? 'on' : 'off'}"></span>${b.ready ? t('online') : t('offline')}</div>
+                    ${b.connections?.length ? `<div class="connection-pills">${b.connections.map(c => `
+                        <span class="conn-pill">🔊 ${c.channelName} <button onclick="leaveChannel(${b.index},'${c.guildId}')" title="${t('leave')}">✕</button></span>
+                    `).join('')}</div>` : ''}
                 </div>
-            `).join('');
+            </div>
+        `).join('');
+    }
+
+    function updateAudioDevices() {
+        const sel = document.getElementById('audioDevice');
+        const devices = state.audioDevices || [];
+        const cur = state.audioDevice;
+        const def = state.defaultAudioDevice;
+
+        sel.innerHTML = devices.length
+            ? devices.map(d => {
+                const ico = d.isRecording ? '🎤' : '🔊';
+                const star = d.id === def ? '⭐ ' : '';
+                return `<option value="${d.id}" ${cur && cur.id === d.id ? 'selected' : ''}>${star}${ico} ${d.name}</option>`;
+            }).join('')
+            : `<option value="">${t('noDevicesAvailable')}</option>`;
+    }
+
+    function updateBotSelect() {
+        const sel = document.getElementById('selectBot');
+        const prev = sel.value;
+        const bots = (state.bots || []).filter(b => b.ready);
+        sel.innerHTML = `<option value="">${t('selectABot')}</option>` + bots.map(b => `<option value="${b.index}">${b.username}</option>`).join('');
+        // Restore previous selection if still available
+        if (prev && sel.querySelector(`option[value="${prev}"]`)) {
+            sel.value = prev;
         }
-        
-        function removePreset(botIndex, guildId) {
-            send({ type: 'removePresetChannel', botIndex, guildId });
-            showToast('Predefinição removida', 'info');
+    }
+
+    function updateGuildSelect(guilds, restoreGuildId) {
+        const sel = document.getElementById('selectGuild');
+        const prev = restoreGuildId || sel.value;
+        if (!guilds) guilds = [];
+        sel.innerHTML = `<option value="">${t('selectAServer')}</option>` + guilds.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+        sel.disabled = !guilds.length;
+        // Restore previous selection if still available
+        if (prev && sel.querySelector(`option[value="${prev}"]`)) {
+            sel.value = prev;
+            currentGuildId = prev;
+            // Auto-load channels for the restored guild
+            loadChannelsForGuild(prev);
         }
-        
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-        
-        // Event Handlers
-        document.getElementById('btnStart').addEventListener('click', () => {
-            send({ type: 'startBroadcast' });
-            showToast('Transmissão iniciada!', 'success');
-        });
-        
-        document.getElementById('btnTestTone').addEventListener('click', () => {
-            send({ type: 'startTestTone' });
-            showToast('Tom de teste iniciado (10 segundos)', 'success');
-        });
-        
-        document.getElementById('btnStop').addEventListener('click', () => {
-            send({ type: 'stopBroadcast' });
-            showToast('Transmissão parada', 'info');
-        });
-        
-        document.getElementById('btnRefreshDevices').addEventListener('click', () => {
-            send({ type: 'refreshAudioDevices' });
-            showToast('A atualizar lista de dispositivos...', 'info');
-        });
-        
-        document.getElementById('audioDevice').addEventListener('change', (e) => {
-            send({ type: 'setAudioDevice', deviceId: parseInt(e.target.value) });
-            showToast('Dispositivo selecionado', 'success');
-        });
-        
-        document.getElementById('btnSaveDeviceDefault').addEventListener('click', () => {
-            const deviceId = parseInt(document.getElementById('audioDevice').value);
-            if (!isNaN(deviceId)) {
-                send({ type: 'setDefaultAudioDevice', deviceId });
-                showToast('Dispositivo guardado como predefinição!', 'success');
-            }
-        });
-        
-        document.getElementById('selectBot').addEventListener('change', (e) => {
-            const botIndex = e.target.value;
-            if (botIndex !== '') {
-                send({ type: 'getGuilds', botIndex: parseInt(botIndex) });
-            }
-            document.getElementById('selectGuild').disabled = !botIndex;
-            document.getElementById('selectChannel').disabled = true;
+    }
+
+    function updateChannelSelect(channels, restoreChannelId) {
+        const sel = document.getElementById('selectChannel');
+        const prev = restoreChannelId || sel.value;
+        if (!channels) channels = [];
+        sel.innerHTML = `<option value="">${t('selectAChannel')}</option>` + channels.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        sel.disabled = !channels.length;
+        // Restore previous selection if still available
+        if (prev && sel.querySelector(`option[value="${prev}"]`)) {
+            sel.value = prev;
+            document.getElementById('btnJoin').disabled = false;
+            document.getElementById('btnSetPreset').disabled = false;
+        } else {
             document.getElementById('btnJoin').disabled = true;
             document.getElementById('btnSetPreset').disabled = true;
-        });
-        
-        document.getElementById('selectGuild').addEventListener('change', (e) => {
-            const guildId = e.target.value;
-            if (guildId) {
-                send({ type: 'getChannels', guildId });
-            }
-            document.getElementById('selectChannel').disabled = !guildId;
-            document.getElementById('btnJoin').disabled = true;
-        });
-        
-        document.getElementById('selectChannel').addEventListener('change', (e) => {
-            document.getElementById('btnJoin').disabled = !e.target.value;
-        });
-        
-        document.getElementById('btnJoin').addEventListener('click', () => {
-            const botIndex = parseInt(document.getElementById('selectBot').value);
-            const guildId = document.getElementById('selectGuild').value;
-            const channelId = document.getElementById('selectChannel').value;
-            
-            if (botIndex >= 0 && guildId && channelId) {
-                send({ type: 'joinChannel', botIndex, guildId, channelId });
-                showToast('A entrar no canal...', 'info');
-            }
-        });
-        
-        document.getElementById('btnSetPreset').addEventListener('click', () => {
-            const botIndex = parseInt(document.getElementById('selectBot').value);
-            const guildId = document.getElementById('selectGuild').value;
-            const channelId = document.getElementById('selectChannel').value;
-            
-            if (botIndex >= 0 && guildId && channelId) {
-                send({ type: 'setPresetChannel', botIndex, guildId, channelId });
-                showToast('Predefinição guardada!', 'success');
-            }
-        });
-        
-        document.getElementById('btnJoinAllPresets').addEventListener('click', () => {
-            send({ type: 'joinAllPresets' });
-            showToast('A entrar nos canais predefinidos...', 'info');
-        });
-        
-        document.getElementById('btnLeaveAll').addEventListener('click', () => {
-            send({ type: 'leaveAllChannels' });
-            showToast('A sair de todos os canais...', 'info');
-        });
-        
-        // VAD Controls
-        document.getElementById('vadEnabled').addEventListener('change', (e) => {
-            send({ type: 'setVadEnabled', enabled: e.target.checked });
-            showToast(e.target.checked ? 'VAD ativado' : 'VAD desativado', 'info');
-        });
-        
-        document.getElementById('vadThreshold').addEventListener('input', (e) => {
-            document.getElementById('vadThresholdValue').textContent = e.target.value;
-        });
-        
-        document.getElementById('vadThreshold').addEventListener('change', (e) => {
-            send({ type: 'setVadThreshold', threshold: parseInt(e.target.value) });
-            showToast(`Threshold definido para ${e.target.value}`, 'info');
-        });
-        
-        document.getElementById('vadSilenceTimeout').addEventListener('input', (e) => {
-            document.getElementById('vadSilenceTimeoutValue').textContent = e.target.value;
-        });
-        
-        document.getElementById('vadSilenceTimeout').addEventListener('change', (e) => {
-            send({ type: 'setVadSilenceTimeout', timeout: parseInt(e.target.value) });
-            showToast(`Tempo de silêncio definido para ${e.target.value}ms`, 'info');
-        });
-        
-        function leaveChannel(botIndex, guildId) {
-            send({ type: 'leaveChannel', botIndex, guildId });
-            showToast('A sair do canal...', 'info');
         }
-        
-        // Initialize
-        connect();
+    }
+
+    function loadChannelsForGuild(guildId) {
+        if (!guildId || currentBotIndex === null) return;
+        const cacheKey = currentBotIndex + '_' + guildId;
+        document.getElementById('selectChannel').disabled = false;
+        if (channelCache[cacheKey]) {
+            updateChannelSelect(channelCache[cacheKey]);
+        } else {
+            send({ type: 'getChannels', guildId });
+        }
+    }
+
+    function updatePresetList() {
+        const presets = state.presetChannels || [];
+        const elBroadcast = document.getElementById('presetListBroadcast');
+        const elChannel = document.getElementById('presetListChannel');
+
+        const html = presets.length
+            ? presets.map(p => `
+                <div class="preset-item">
+                    <div>
+                        <div class="preset-label">🤖 ${p.botName} → 🔊 ${p.channelName}</div>
+                        <div class="preset-detail">${p.guildName}</div>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" onclick="removePreset(${p.botIndex},'${p.guildId}')">✕</button>
+                </div>
+            `).join('')
+            : `<div class="empty" style="padding:1rem;"><p>${t('noPresetsConfigured')}</p></div>`;
+
+        elBroadcast.innerHTML = html;
+        elChannel.innerHTML = html;
+    }
+
+    function updateTokenList() {
+        const el = document.getElementById('tokenList');
+        const tokens = state.tokens || [];
+        document.getElementById('tokenCountBadge').textContent = tokens.length;
+
+        if (!tokens.length) {
+            el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><p>${t('noTokensConfigured')}<br>${t('addTokenAbove')}</p></div>`;
+            return;
+        }
+
+        el.innerHTML = tokens.map(t_item => `
+            <div class="token-item">
+                <div class="token-index">${t_item.index + 1}</div>
+                <div class="token-info">
+                    <div class="token-name">${t_item.botName}</div>
+                </div>
+                <button class="btn btn-danger btn-sm" onclick="confirmRemoveToken(${t_item.index}, '${t_item.botName}')">${t('btnRemove')}</button>
+            </div>
+        `).join('');
+    }
+
+    function updateVadSettings() {
+        const vad = state.vad || {};
+        const vadEnabled = document.getElementById('vadEnabled');
+        const vadThreshold = document.getElementById('vadThreshold');
+        const vadThresholdValue = document.getElementById('vadThresholdValue');
+        const vadSilenceTimeout = document.getElementById('vadSilenceTimeout');
+        const vadSilenceTimeoutValue = document.getElementById('vadSilenceTimeoutValue');
+
+        if (vadEnabled) vadEnabled.checked = vad.enabled !== false;
+        if (vadThreshold) vadThreshold.value = vad.threshold || 50;
+        if (vadThresholdValue) vadThresholdValue.textContent = vad.threshold || 50;
+        if (vadSilenceTimeout) vadSilenceTimeout.value = vad.silenceTimeout || 500;
+        if (vadSilenceTimeoutValue) vadSilenceTimeoutValue.textContent = vad.silenceTimeout || 500;
+
+        updateVadIndicator(vad.isSpeaking);
+    }
+
+    function updateVadIndicator(speaking) {
+        const el = document.getElementById('vadStatus');
+        const txt = document.getElementById('vadStatusText');
+        if (el && txt) {
+            el.className = 'vad-indicator' + (speaking ? ' speaking' : '');
+            txt.textContent = speaking ? t('vadSpeaking') : t('vadSilence');
+        }
+    }
+
+    // ───── Actions ─────
+    function leaveChannel(botIndex, guildId) {
+        send({ type: 'leaveChannel', botIndex, guildId });
+    }
+
+    function removePreset(botIndex, guildId) {
+        send({ type: 'removePresetChannel', botIndex, guildId });
+    }
+
+    function confirmRemoveToken(index, name) {
+        const overlay = document.createElement('div');
+        overlay.className = 'dialog-overlay';
+        overlay.innerHTML = `
+            <div class="dialog">
+                <h3>${t('dialogRemoveBot')}</h3>
+                <p>${t('dialogRemoveConfirm', name)}</p>
+                <div class="dialog-actions">
+                    <button class="btn btn-ghost" id="dlgCancel">${t('dialogCancel')}</button>
+                    <button class="btn btn-danger" id="dlgConfirm">${t('dialogRemove')}</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        overlay.querySelector('#dlgCancel').onclick = () => overlay.remove();
+        overlay.querySelector('#dlgConfirm').onclick = () => { send({ type: 'removeToken', botIndex: index }); overlay.remove(); };
+        overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    }
+
+    // ───── Toast ─────
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const t = document.createElement('div');
+        t.className = `toast ${type}`;
+        t.textContent = message;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+    }
+
+    // ───── Event Listeners ─────
+
+    // Broadcast
+    document.getElementById('btnStart').addEventListener('click', () => send({ type: 'startBroadcast' }));
+    document.getElementById('btnTestTone').addEventListener('click', () => { send({ type: 'startTestTone' }); showToast(t('testToneStarted'), 'success'); });
+    document.getElementById('btnStop').addEventListener('click', () => send({ type: 'stopBroadcast' }));
+    document.getElementById('btnRefreshDevices').addEventListener('click', () => { send({ type: 'refreshAudioDevices' }); showToast(t('refreshingDevices'), 'info'); });
+    document.getElementById('audioDevice').addEventListener('change', e => send({ type: 'setAudioDevice', deviceId: parseInt(e.target.value) }));
+    document.getElementById('btnSaveDeviceDefault').addEventListener('click', () => {
+        const id = parseInt(document.getElementById('audioDevice').value);
+        if (!isNaN(id)) { send({ type: 'setDefaultAudioDevice', deviceId: id }); showToast(t('deviceSavedAsDefault'), 'success'); }
+    });
+    document.getElementById('btnJoinAllPresets').addEventListener('click', () => { send({ type: 'joinAllPresets' }); showToast(t('joiningPresets'), 'info'); });
+    document.getElementById('btnLeaveAll').addEventListener('click', () => send({ type: 'leaveAllChannels' }));
+
+    // Channel join — with caching and selection persistence
+    document.getElementById('selectBot').addEventListener('change', e => {
+        const v = e.target.value;
+        currentBotIndex = v !== '' ? parseInt(v) : null;
+        const prevGuildId = currentGuildId;
+        const prevChannelId = document.getElementById('selectChannel').value || null;
+        currentGuildId = null;
+
+        document.getElementById('selectGuild').disabled = !v;
+        document.getElementById('selectChannel').disabled = true;
+        document.getElementById('btnJoin').disabled = true;
+        document.getElementById('btnSetPreset').disabled = true;
+
+        if (currentBotIndex !== null) {
+            pendingGuildRestore = prevGuildId;
+            pendingChannelRestore = prevChannelId;
+            if (guildCache[currentBotIndex]) {
+                updateGuildSelect(guildCache[currentBotIndex], prevGuildId);
+            } else {
+                send({ type: 'getGuilds', botIndex: currentBotIndex });
+            }
+        } else {
+            pendingGuildRestore = null;
+            pendingChannelRestore = null;
+            updateGuildSelect([]);
+        }
+    });
+
+    document.getElementById('selectGuild').addEventListener('change', e => {
+        currentGuildId = e.target.value || null;
+        document.getElementById('selectChannel').disabled = !currentGuildId;
+        document.getElementById('btnJoin').disabled = true;
+        document.getElementById('btnSetPreset').disabled = true;
+
+        if (currentGuildId) {
+            loadChannelsForGuild(currentGuildId);
+        } else {
+            updateChannelSelect([]);
+        }
+    });
+
+    document.getElementById('selectChannel').addEventListener('change', e => {
+        document.getElementById('btnJoin').disabled = !e.target.value;
+    });
+
+    document.getElementById('btnJoin').addEventListener('click', () => {
+        const botIndex = parseInt(document.getElementById('selectBot').value);
+        const guildId = document.getElementById('selectGuild').value;
+        const channelId = document.getElementById('selectChannel').value;
+        if (botIndex >= 0 && guildId && channelId) { send({ type: 'joinChannel', botIndex, guildId, channelId }); showToast(t('joiningChannel'), 'info'); }
+    });
+
+    document.getElementById('btnSetPreset').addEventListener('click', () => {
+        const botIndex = parseInt(document.getElementById('selectBot').value);
+        const guildId = document.getElementById('selectGuild').value;
+        const channelId = document.getElementById('selectChannel').value;
+        if (botIndex >= 0 && guildId && channelId) { send({ type: 'setPresetChannel', botIndex, guildId, channelId }); showToast(t('presetSaved'), 'success'); }
+    });
+
+    // Token management
+    document.getElementById('btnAddToken').addEventListener('click', () => {
+        const input = document.getElementById('newToken');
+        const token = input.value.trim();
+        if (!token) { showToast(t('pasteValidToken'), 'warning'); return; }
+        const btn = document.getElementById('btnAddToken');
+        btn.disabled = true;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.49-8.49l2.83-2.83M2 12h4m12 0h4m-3.93 7.07l-2.83-2.83M6.34 6.34L3.51 3.51"></path></svg> ' + t('btnAdding');
+        send({ type: 'addToken', token });
+        input.value = '';
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> ' + t('btnAdd');
+        }, 3000);
+    });
+
+    document.getElementById('newToken').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btnAddToken').click(); });
+    document.getElementById('toggleTokenVis').addEventListener('click', () => { const i = document.getElementById('newToken'); i.type = i.type === 'password' ? 'text' : 'password'; });
+
+    // VAD
+    document.getElementById('vadEnabled').addEventListener('change', e => send({ type: 'setVadEnabled', enabled: e.target.checked }));
+    document.getElementById('vadThreshold').addEventListener('input', e => { document.getElementById('vadThresholdValue').textContent = e.target.value; });
+    document.getElementById('vadThreshold').addEventListener('change', e => send({ type: 'setVadThreshold', threshold: parseInt(e.target.value) }));
+    document.getElementById('vadSilenceTimeout').addEventListener('input', e => { document.getElementById('vadSilenceTimeoutValue').textContent = e.target.value; });
+    document.getElementById('vadSilenceTimeout').addEventListener('change', e => send({ type: 'setVadSilenceTimeout', timeout: parseInt(e.target.value) }));
+
+    // ───── Init ─────
+    // Apply language on load
+    setLanguage(currentLang);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+        btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+    });
+
+    connect();
     </script>
 </body>
 </html>

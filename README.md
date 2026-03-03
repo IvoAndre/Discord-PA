@@ -1,29 +1,29 @@
-# Discord PA System
+# <image src=".branding/Discord-PA.svg" height=25px/> Discord PA System
 
 Um sistema profissional de Public Address (PA) para Discord que transmite áudio de qualquer dispositivo de entrada ou saída do computador para múltiplos canais de voz simultaneamente.
 
 ![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
 ![Discord.js](https://img.shields.io/badge/Discord.js-14.14-blue?logo=discord)
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-- 🤖 **Múltiplos Bots** - Suporte para vários bots Discord funcionando simultaneamente
-- 🎤 **Captura Universal de Áudio** - Captura de TODOS os dispositivos de áudio (entradas e saídas)
-- 📡 **Transmissão Simultânea** - Transmite para múltiplos canais de voz ao mesmo tempo
-- 🌐 **Interface Web Moderna** - Interface intuitiva para gestão completa
-- ⚡ **Tempo Real** - Atualizações instantâneas via WebSocket
-- 💾 **Configuração Persistente** - Guarda dispositivo de áudio e canais predefinidos
-- 🎚️ **Voice Activity Detection (VAD)** - Os bots mostram indicador "a falar" apenas quando há som
-- 🔄 **Auto-restauro** - Restaura automaticamente a última configuração ao iniciar
+- **Múltiplos Bots** - Suporte para vários bots Discord funcionando simultaneamente
+- **Captura Universal de Áudio** - Captura de TODOS os dispositivos de áudio (entradas e saídas)
+- **Transmissão Simultânea** - Transmite para múltiplos canais de voz ao mesmo tempo
+- **Interface Web Moderna** - Interface intuitiva para gestão completa
+- **Tempo Real** - Atualizações instantâneas via WebSocket
+- **Configuração Persistente** - Guarda dispositivo de áudio e canais predefinidos
+- **Voice Activity Detection (VAD)** - Os bots mostram indicador "a falar" apenas quando há som
+- **Auto-restauro** - Restaura automaticamente a última configuração ao iniciar
 
-## 📋 Requisitos
+## Requisitos
 
 - **Node.js 18** ou superior
 - **FFmpeg** (incluído automaticamente via ffmpeg-static)
 - **Windows** (para captura de dispositivos via DirectShow)
 - Conta Discord com bots criados no [Discord Developer Portal](https://discord.com/developers/applications)
 
-## 🚀 Instalação
+## Instalação
 
 ### 1. Clone o repositório
 
@@ -61,22 +61,22 @@ npm start
 
 Abra o navegador em **http://localhost:3000**
 
-## 🤖 Criar um Bot Discord
+## Criar um Bot Discord
 
 1. Aceda ao [Discord Developer Portal](https://discord.com/developers/applications)
 2. Clique em **"New Application"** e dê um nome
 3. Vá a **"Bot"** no menu lateral
 4. Clique em **"Reset Token"** e copie o token
 5. Em **"Privileged Gateway Intents"**, ative:
-   - ✅ Server Members Intent
+   - Server Members Intent
 6. Vá a **"OAuth2"** > **"URL Generator"**
 7. Selecione os scopes: `bot`
 8. Selecione as permissões: `Connect`, `Speak`, `View Channels`
 9. Copie o URL gerado e abra-o para adicionar o bot aos seus servidores
 
-> 💡 **Dica**: Crie múltiplos bots se precisar de transmitir para muitos canais simultaneamente. Cada bot pode estar em um canal de voz por servidor.
+> **Dica**: Crie múltiplos bots se precisar de transmitir para muitos canais simultaneamente. Cada bot pode estar em um canal de voz por servidor.
 
-## 📖 Como Usar
+## Como Usar
 
 1. **Inicie o servidor** com `npm start`
 2. **Aceda à interface web** em `http://localhost:3000`
@@ -87,7 +87,7 @@ Abra o navegador em **http://localhost:3000**
 7. **Clique em "Iniciar Transmissão"** para começar a transmitir áudio
 8. **Configure o VAD** se quiser que os bots só mostrem "a falar" quando há som
 
-## 🎚️ Voice Activity Detection (VAD)
+## Voice Activity Detection (VAD)
 
 O VAD permite que os bots mostrem o indicador de "a falar" no Discord apenas quando há som real:
 
@@ -95,7 +95,7 @@ O VAD permite que os bots mostrem o indicador de "a falar" no Discord apenas qua
 - **Threshold**: Sensibilidade do detetor (1-500, menor = mais sensível)
 - **Timeout de Silêncio**: Tempo em ms antes de parar após silêncio (200-2000ms)
 
-## 🔧 Comandos
+## Comandos
 
 | Comando | Descrição |
 |---------|-----------|
@@ -103,7 +103,7 @@ O VAD permite que os bots mostrem o indicador de "a falar" no Discord apenas qua
 | `npm run dev` | Inicia em modo de desenvolvimento (auto-reload) |
 | `npm run debug` | Inicia com logs de debug detalhados |
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 Discord-PA/
@@ -122,14 +122,14 @@ Discord-PA/
 └── README.md
 ```
 
-## ⚙️ Variáveis de Ambiente
+## Variáveis de Ambiente
 
 | Variável | Descrição | Padrão |
 |----------|-----------|--------|
 | `BOT_TOKENS` | Tokens dos bots separados por vírgula | (obrigatório) |
 | `PORT` | Porta do servidor web | 3000 |
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 - **[discord.js](https://discord.js.org/)** - Biblioteca principal do Discord
 - **[@discordjs/voice](https://www.npmjs.com/package/@discordjs/voice)** - Suporte a canais de voz
@@ -138,7 +138,7 @@ Discord-PA/
 - **[ffmpeg-static](https://www.npmjs.com/package/ffmpeg-static)** - Captura e processamento de áudio
 - **[opusscript](https://www.npmjs.com/package/opusscript)** - Codificação de áudio Opus
 
-## 🐛 Resolução de Problemas
+## Resolução de Problemas
 
 ### O bot não entra no canal
 - Verifique se o token do bot está correto no `.env`

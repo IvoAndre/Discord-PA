@@ -1,8 +1,8 @@
-// Suprimir aviso de deprecação do Discord.js (evento 'ready')
+// Suppress Discord.js deprecation warning ('ready' event)
 const originalEmitWarning = process.emitWarning;
 process.emitWarning = (warning, ...args) => {
     if (typeof warning === 'string' && warning.includes('ready event has been renamed')) {
-        return; // Ignorar este aviso específico
+        return; // Ignore this specific warning
     }
     originalEmitWarning.call(process, warning, ...args);
 };
@@ -26,40 +26,40 @@ const configManager = new ConfigManager();
 const botManager = new BotManager();
 const audioManager = new AudioManager();
 
-// Aplicar configurações guardadas
+// Apply saved settings
 function applyLoadedConfig() {
-    // Aplicar dispositivo de áudio predefinido
+    // Apply default audio device
     const savedDeviceId = configManager.getAudioDevice();
     if (savedDeviceId !== null) {
         const devices = audioManager.getAudioDevices();
         const device = devices.find(d => d.id === savedDeviceId);
         if (device) {
             audioManager.setDevice(savedDeviceId);
-            console.log(`[Config] Dispositivo de áudio restaurado: ${device.displayName}`);
+            console.log(`[Config] Audio device restored: ${device.displayName}`);
         }
     }
     
-    // Aplicar configurações VAD
+    // Apply VAD settings
     const vadSettings = configManager.getVadSettings();
     botManager.vadEnabled = vadSettings.enabled;
     botManager.vadThreshold = vadSettings.threshold;
     botManager.vadSilenceTimeout = vadSettings.silenceTimeout;
-    console.log(`[Config] VAD restaurado: enabled=${vadSettings.enabled}, threshold=${vadSettings.threshold}, timeout=${vadSettings.silenceTimeout}ms`);
+    console.log(`[Config] VAD restored: enabled=${vadSettings.enabled}, threshold=${vadSettings.threshold}, timeout=${vadSettings.silenceTimeout}ms`);
 }
 
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Estado global
+// Global state
 let connectedClients = new Set();
 
-// WebSocket para atualizações em tempo real
+// WebSocket for real-time updates
 wss.on('connection', (ws) => {
-    console.log('[WebSocket] Cliente conectado');
+    console.log('[WebSocket] Client connected');
     connectedClients.add(ws);
     
-    // Enviar estado inicial
+    // Send initial state
     sendStateToClient(ws);
     
     ws.on('message', async (data) => {
@@ -67,18 +67,18 @@ wss.on('connection', (ws) => {
             const message = JSON.parse(data);
             await handleWebSocketMessage(ws, message);
         } catch (error) {
-            console.error('[WebSocket] Erro ao processar mensagem:', error);
+            console.error('[WebSocket] Error processing message:', error);
             ws.send(JSON.stringify({ type: 'error', message: error.message }));
         }
     });
     
     ws.on('close', () => {
-        console.log('[WebSocket] Cliente desconectado');
+        console.log('[WebSocket] Client disconnected');
         connectedClients.delete(ws);
     });
 });
 
-// Handlers de mensagens WebSocket
+// WebSocket message handlers
 async function handleWebSocketMessage(ws, message) {
     switch (message.type) {
         case 'getState':
@@ -99,20 +99,20 @@ async function handleWebSocketMessage(ws, message) {
         case 'setAudioDevice':
             const wasTransmitting = isBroadcastActive;
             
-            // Se estiver a transmitir, parar primeiro
+            // If broadcasting, stop first
             if (wasTransmitting) {
-                console.log('[Sistema] A reiniciar transmissão com novo dispositivo...');
+                console.log('[System] Restarting broadcast with new device...');
                 stopBroadcast();
             }
             
             audioManager.setDevice(message.deviceId);
             
-            // Reiniciar transmissão se estava ativa
+            // Restart broadcast if it was active
             if (wasTransmitting) {
                 setTimeout(() => {
                     startBroadcast();
                     broadcastState();
-                }, 500); // Pequeno delay para garantir que o dispositivo está pronto
+                }, 500); // Small delay to ensure device is ready
             }
             
             broadcastState();
@@ -155,7 +155,7 @@ async function handleWebSocketMessage(ws, message) {
             break;
             
         case 'setPresetChannel':
-            // Guardar no BotManager e no ConfigManager
+            // Save to BotManager and ConfigManager
             const bot = botManager.bots[message.botIndex];
             const guild = bot?.client.guilds.cache.get(message.guildId);
             const channel = guild?.channels.cache.get(message.channelId);
@@ -187,7 +187,7 @@ async function handleWebSocketMessage(ws, message) {
             audioManager.setDevice(message.deviceId);
             configManager.setAudioDevice(message.deviceId);
             broadcastState();
-            ws.send(JSON.stringify({ type: 'success', message: 'Dispositivo guardado como predefinido' }));
+            ws.send(JSON.stringify({ type: 'success', message: 'deviceSavedAsDefault' }));
             break;
             
         case 'joinAllPresets':
@@ -226,10 +226,71 @@ async function handleWebSocketMessage(ws, message) {
         case 'getVadStatus':
             ws.send(JSON.stringify({ type: 'vadStatus', status: botManager.getVadStatus() }));
             break;
+            
+        case 'addToken':
+            try {
+                const newToken = (message.token || '').trim();
+                if (!newToken) {
+                    ws.send(JSON.stringify({ type: 'error', message: 'tokenCannotBeEmpty' }));
+                    break;
+                }
+                
+                // Try starting the bot first to validate the token
+                console.log('[System] Adding new bot...');
+                await botManager.addBot(newToken);
+                
+                // If we got here, the token is valid - save to config
+                configManager.addToken(newToken);
+                
+                // Wait a moment for the bot to become ready
+                setTimeout(() => broadcastState(), 2000);
+                
+                ws.send(JSON.stringify({ type: 'success', message: 'botAddedSuccessfully' }));
+                broadcastState();
+            } catch (error) {
+                console.error('[System] Error adding bot:', error.message);
+                ws.send(JSON.stringify({ type: 'error', message: `errorAddingBot:${error.message}` }));
+            }
+            break;
+            
+        case 'removeToken':
+            try {
+                const removeIndex = message.botIndex;
+                if (removeIndex === undefined || removeIndex < 0 || removeIndex >= botManager.bots.length) {
+                    ws.send(JSON.stringify({ type: 'error', message: 'invalidBotIndex' }));
+                    break;
+                }
+                
+                // If broadcasting and this is the last connected bot, stop broadcast
+                if (isBroadcastActive && botManager.bots.length === 1) {
+                    stopBroadcast();
+                }
+                
+                const removedName = botManager.bots[removeIndex]?.username || 'Bot';
+                await botManager.removeBot(removeIndex);
+                configManager.removeToken(removeIndex);
+                
+                ws.send(JSON.stringify({ type: 'success', message: `botRemovedSuccessfully:${removedName}` }));
+                broadcastState();
+            } catch (error) {
+                console.error('[System] Error removing bot:', error.message);
+                ws.send(JSON.stringify({ type: 'error', message: `errorRemovingBot:${error.message}` }));
+            }
+            break;
+            
+        case 'getTokens':
+            // Send masked tokens (for security)
+            const maskedTokens = configManager.getTokens().map((t, i) => ({
+                index: i,
+                masked: t.substring(0, 6) + '...' + t.substring(t.length - 4),
+                botName: botManager.bots[i]?.username || 'Loading...'
+            }));
+            ws.send(JSON.stringify({ type: 'tokens', tokens: maskedTokens }));
+            break;
     }
 }
 
-// Entrar em todos os canais predefinidos (usando ConfigManager)
+// Join all preset channels (using ConfigManager)
 async function joinAllPresets() {
     const presets = configManager.getChannelPresets();
     const results = [];
@@ -239,7 +300,7 @@ async function joinAllPresets() {
             await botManager.joinChannel(preset.botIndex, preset.guildId, preset.channelId);
             results.push({ success: true, ...preset });
         } catch (error) {
-            console.error(`[Sistema] Erro ao entrar no canal predefinido:`, error.message);
+            console.error(`[System] Error joining preset channel:`, error.message);
             results.push({ success: false, error: error.message, ...preset });
         }
     }
@@ -247,14 +308,14 @@ async function joinAllPresets() {
     return results;
 }
 
-// Funções de broadcast
+// Broadcast functions
 let isBroadcastActive = false;
 
 function startBroadcast() {
-    // Verificar se há bots conectados
+    // Check if there are connected bots
     if (!botManager.hasActiveConnections()) {
-        console.warn('[Sistema] Não é possível iniciar transmissão - nenhum bot está num canal de voz!');
-        broadcastMessage({ type: 'warning', message: 'Nenhum bot está conectado a um canal de voz!' });
+        console.warn('[System] Cannot start broadcast - no bot is in a voice channel!');
+        broadcastMessage({ type: 'warning', message: 'noBotConnectedToVoiceChannel' });
         return false;
     }
     
@@ -263,7 +324,7 @@ function startBroadcast() {
         const success = botManager.startBroadcast(audioStream);
         if (success) {
             isBroadcastActive = true;
-            console.log('[Sistema] Transmissão iniciada');
+            console.log('[System] Broadcast started');
             return true;
         } else {
             audioManager.stopCapture();
@@ -277,31 +338,31 @@ function stopBroadcast() {
     isBroadcastActive = false;
     audioManager.stopCapture();
     botManager.stopBroadcast();
-    console.log('[Sistema] Transmissão parada');
+    console.log('[System] Broadcast stopped');
 }
 
-// Função para tom de teste
+// Test tone function
 function startTestTone() {
-    // Verificar se há bots conectados
+    // Check if there are connected bots
     if (!botManager.hasActiveConnections()) {
-        console.warn('[Sistema] Não é possível iniciar tom de teste - nenhum bot está num canal de voz!');
-        broadcastMessage({ type: 'warning', message: 'Nenhum bot está conectado a um canal de voz!' });
+        console.warn('[System] Cannot start test tone - no bot is in a voice channel!');
+        broadcastMessage({ type: 'warning', message: 'noBotConnectedToVoiceChannel' });
         return false;
     }
     
-    const audioStream = audioManager.generateTestTone(10000); // 10 segundos
+    const audioStream = audioManager.generateTestTone(10000); // 10 seconds
     if (audioStream) {
         const success = botManager.startBroadcast(audioStream);
         if (success) {
             isBroadcastActive = true;
-            console.log('[Sistema] Tom de teste iniciado (10 segundos)');
+            console.log('[System] Test tone started (10 seconds)');
             return true;
         }
     }
     return false;
 }
 
-// Enviar mensagem para todos os clientes
+// Send message to all clients
 function broadcastMessage(message) {
     const msgJson = JSON.stringify(message);
     connectedClients.forEach(client => {
@@ -311,9 +372,16 @@ function broadcastMessage(message) {
     });
 }
 
-// Funções auxiliares
-function sendStateToClient(ws) {
-    const state = {
+// Helper functions
+function getStatePayload() {
+    // Masked tokens for security
+    const maskedTokens = configManager.getTokens().map((t, i) => ({
+        index: i,
+        masked: t.substring(0, 6) + '...' + t.substring(t.length - 4),
+        botName: botManager.bots[i]?.username || 'Loading...'
+    }));
+    
+    return {
         type: 'state',
         bots: botManager.getBotsStatus(),
         audioDevice: audioManager.getCurrentDevice(),
@@ -322,23 +390,17 @@ function sendStateToClient(ws) {
         presetChannels: configManager.getChannelPresets(),
         activeConnections: botManager.getActiveConnectionCount(),
         defaultAudioDevice: configManager.getAudioDevice(),
-        vad: botManager.getVadStatus()
+        vad: botManager.getVadStatus(),
+        tokens: maskedTokens
     };
-    ws.send(JSON.stringify(state));
+}
+
+function sendStateToClient(ws) {
+    ws.send(JSON.stringify(getStatePayload()));
 }
 
 function broadcastState() {
-    const state = {
-        type: 'state',
-        bots: botManager.getBotsStatus(),
-        audioDevice: audioManager.getCurrentDevice(),
-        isBroadcasting: audioManager.isCapturing() || botManager.isBroadcasting(),
-        audioDevices: audioManager.getAudioDevices(),
-        presetChannels: configManager.getChannelPresets(),
-        activeConnections: botManager.getActiveConnectionCount(),
-        defaultAudioDevice: configManager.getAudioDevice(),
-        vad: botManager.getVadStatus()
-    };
+    const state = getStatePayload();
     const stateJson = JSON.stringify(state);
     connectedClients.forEach(client => {
         if (client.readyState === 1) { // WebSocket.OPEN
@@ -347,7 +409,7 @@ function broadcastState() {
     });
 }
 
-// Eventos dos managers
+// Manager events
 botManager.on('statusChange', () => broadcastState());
 audioManager.on('statusChange', () => broadcastState());
 
@@ -364,55 +426,66 @@ app.get('/api/audio-devices', (req, res) => {
     res.json(audioManager.getAudioDevices());
 });
 
-// Inicialização
+// Initialization
 async function init() {
     const PORT = process.env.PORT || 3000;
     
-    // Carregar configurações guardadas
-    console.log('[Config] A carregar configurações...');
+    // Load saved settings
+    console.log('[Config] Loading settings...');
     
-    // Iniciar bots
-    const tokens = (process.env.BOT_TOKENS || '').split(',').filter(t => t.trim());
+    // Load tokens: first from config, then from .env as fallback
+    let tokens = configManager.getTokens();
     
     if (tokens.length === 0) {
-        console.warn('[AVISO] Nenhum token de bot configurado!');
-        console.warn('Configure a variável BOT_TOKENS no ficheiro .env');
-        console.warn('Exemplo: BOT_TOKENS=token1,token2');
-        console.log('[Sistema] A iniciar em modo de demonstração...');
+        // Fallback: load from .env if no tokens in config
+        const envTokens = (process.env.BOT_TOKENS || '').split(',').filter(t => t.trim());
+        if (envTokens.length > 0) {
+            console.log('[Config] Migrating tokens from .env to config.json...');
+            for (const t of envTokens) {
+                configManager.addToken(t.trim());
+            }
+            tokens = envTokens.map(t => t.trim());
+        }
+    }
+    
+    if (tokens.length === 0) {
+        console.warn('[WARNING] No bot tokens configured!');
+        console.warn('Add tokens via web interface or set BOT_TOKENS in .env');
+        console.log('[System] Starting without bots \u2014 add tokens via web interface.');
     } else {
-        console.log(`[Sistema] A iniciar ${tokens.length} bot(s)...`);
+        console.log(`[System] Starting ${tokens.length} bot(s)...`);
         
         for (const token of tokens) {
             try {
                 await botManager.addBot(token.trim());
             } catch (error) {
-                console.error(`[ERRO] Falha ao iniciar bot:`, error.message);
+                console.error(`[ERROR] Failed to start bot:`, error.message);
             }
         }
     }
     
-    // Aplicar configurações após os bots estarem prontos
+    // Apply settings after bots are ready
     setTimeout(() => {
         applyLoadedConfig();
         
-        // Restaurar canais predefinidos para o BotManager
+        // Restore preset channels to BotManager
         const presets = configManager.getChannelPresets();
         for (const preset of presets) {
             botManager.setPresetChannel(preset.botIndex, preset.guildId, preset.channelId);
         }
-        console.log(`[Config] ${presets.length} canal(is) predefinido(s) restaurado(s)`);
+        console.log(`[Config] ${presets.length} preset channel(s) restored`);
     }, 2000);
     
-    // Iniciar servidor
+    // Start server
     server.listen(PORT, () => {
-        console.log(`[Sistema] Servidor a correr em http://localhost:${PORT}`);
-        console.log('[Sistema] Abra o navegador para aceder à interface de gestão');
+        console.log(`[System] Server running at http://localhost:${PORT}`);
+        console.log('[System] Open browser to access the management interface');
     });
 }
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-    console.log('\n[Sistema] A encerrar...');
+    console.log('\n[System] Shutting down...');
     stopBroadcast();
     await botManager.shutdown();
     process.exit(0);

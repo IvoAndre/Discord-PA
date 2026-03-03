@@ -126,3 +126,4 @@ config.json
 
 package-lock.json
 run.bat
+*.ai

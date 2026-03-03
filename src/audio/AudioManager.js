@@ -4,19 +4,19 @@ const { spawn, execSync } = require('child_process');
 
 let ffmpegPath = null;
 
-// Carregar ffmpeg
+// Load ffmpeg
 try {
     ffmpegPath = require('ffmpeg-static');
-    console.log('[Áudio] FFmpeg disponível:', ffmpegPath);
+    console.log('[Audio] FFmpeg available:', ffmpegPath);
 } catch (error) {
-    console.warn('[Áudio] ffmpeg-static não encontrado');
-    // Tentar usar ffmpeg do sistema
+    console.warn('[Audio] ffmpeg-static not found');
+    // Try using system ffmpeg
     try {
         execSync('ffmpeg -version', { stdio: 'ignore' });
         ffmpegPath = 'ffmpeg';
-        console.log('[Áudio] Usando FFmpeg do sistema');
+        console.log('[Audio] Using system FFmpeg');
     } catch (e) {
-        console.error('[Áudio] FFmpeg não encontrado!');
+        console.error('[Audio] FFmpeg not found!');
     }
 }
 
@@ -31,7 +31,7 @@ class AudioManager extends EventEmitter {
         this.cachedDevices = null;
     }
     
-    // Listar TODOS os dispositivos de áudio do Windows
+    // List ALL Windows audio devices
     getAudioDevices() {
         if (this.cachedDevices) {
             return this.cachedDevices;
@@ -41,7 +41,7 @@ class AudioManager extends EventEmitter {
         let deviceIndex = 0;
         const recordingDeviceNames = new Set();
         
-        // 1. Listar dispositivos de GRAVAÇÃO (DirectShow via FFmpeg)
+        // 1. List RECORDING devices (DirectShow via FFmpeg)
         if (ffmpegPath) {
             try {
                 const result = execSync(`"${ffmpegPath}" -list_devices true -f dshow -i dummy 2>&1`, {
@@ -79,9 +79,9 @@ class AudioManager extends EventEmitter {
             }
         }
         
-        // 2. Listar TODOS os dispositivos de áudio (AudioEndpoint) via PowerShell
+        // 2. List ALL audio devices (AudioEndpoint) via PowerShell
         try {
-            // Get-PnpDevice lista todos os endpoints de áudio do Windows
+            // Get-PnpDevice lists all Windows audio endpoints
             const psCommand = `powershell -Command "Get-PnpDevice -Class AudioEndpoint -Status OK | Select-Object -ExpandProperty FriendlyName"`;
             const allEndpoints = execSync(psCommand, {
                 encoding: 'utf8',
@@ -93,11 +93,11 @@ class AudioManager extends EventEmitter {
                 .filter(d => d && d.length > 0);
             
             allDeviceNames.forEach(name => {
-                // Verificar se já existe como dispositivo de gravação (comparação case-insensitive)
+                // Check if already exists as recording device (case-insensitive comparison)
                 const isAlreadyRecording = recordingDeviceNames.has(name.toLowerCase());
                 
                 if (!isAlreadyRecording) {
-                    // Determinar se é entrada (Input) ou saída (Output/Playback)
+                    // Determine if it's input (Input) or output (Output/Playback)
                     const isInput = /Input|Microphone|Mic|Line In|Conjunto de microfones/i.test(name);
                     
                     devices.push({
@@ -112,34 +112,34 @@ class AudioManager extends EventEmitter {
                 }
             });
         } catch (error) {
-            console.warn('[Áudio] Não foi possível listar dispositivos via Get-PnpDevice:', error.message);
+            console.warn('[Audio] Could not list devices via Get-PnpDevice:', error.message);
         }
         
         if (devices.length === 0) {
             devices.push({
                 id: 0,
-                name: 'Nenhum dispositivo encontrado',
+                name: 'No devices found',
                 type: 'none',
-                displayName: 'Nenhum dispositivo encontrado',
+                displayName: 'No devices found',
                 isRecording: false,
                 isPlayback: false
             });
         }
         
-        // Ordenar: Gravação primeiro (mais úteis para captura), depois reprodução
+        // Sort: Recording first (most useful for capture), then playback
         devices.sort((a, b) => {
             if (a.isRecording && !b.isRecording) return -1;
             if (!a.isRecording && b.isRecording) return 1;
             return a.name.localeCompare(b.name);
         });
         
-        // Reindexar após ordenação
+        // Reindex after sorting
         devices.forEach((d, i) => d.id = i);
         
         this.cachedDevices = devices;
-        console.log(`[Áudio] ${devices.length} dispositivo(s) encontrado(s):`);
-        console.log(`  - Gravação: ${devices.filter(d => d.isRecording).length}`);
-        console.log(`  - Reprodução: ${devices.filter(d => d.isPlayback).length}`);
+        console.log(`[Audio] ${devices.length} device(s) found:`);
+        console.log(`  - Recording: ${devices.filter(d => d.isRecording).length}`);
+        console.log(`  - Playback: ${devices.filter(d => d.isPlayback).length}`);
         return devices;
     }
     
@@ -148,7 +148,7 @@ class AudioManager extends EventEmitter {
         const lines = output.split('\n');
         
         for (const line of lines) {
-            // Procurar linhas com "(audio)" que indicam dispositivos de áudio
+            // Search lines with "(audio)" that indicate audio devices
             const match = line.match(/\[dshow[^\]]*\]\s*"([^"]+)"\s*\(audio\)/i);
             if (match) {
                 devices.push(match[1]);
@@ -181,9 +181,9 @@ class AudioManager extends EventEmitter {
         if (device) {
             this.currentDeviceId = numericId;
             this.currentDeviceName = device.name;
-            console.log(`[Áudio] Dispositivo selecionado: ${device.displayName} (ID: ${numericId})`);
+            console.log(`[Audio] Device selected: ${device.displayName} (ID: ${numericId})`);
         } else {
-            console.warn(`[Áudio] Dispositivo com ID ${numericId} não encontrado`);
+            console.warn(`[Audio] Device with ID ${numericId} not found`);
         }
         
         this.emit('statusChange');
@@ -192,43 +192,43 @@ class AudioManager extends EventEmitter {
     
     startCapture() {
         if (this._isCapturing) {
-            console.log('[Áudio] Já está a capturar');
+            console.log('[Audio] Already capturing');
             return this.audioStream;
         }
         
         const device = this.getCurrentDevice();
         if (!device) {
-            console.error('[Áudio] Nenhum dispositivo de áudio disponível');
+            console.error('[Audio] No audio device available');
             return null;
         }
         
         if (!ffmpegPath) {
-            console.error('[Áudio] FFmpeg não disponível');
+            console.error('[Audio] FFmpeg not available');
             return null;
         }
         
         if (device.type === 'loopback-hint') {
-            console.error('[Áudio] Por favor, ative o "Stereo Mix" no Painel de Controlo do Windows');
-            console.error('[Áudio] Painel de Controlo > Som > Gravação > Stereo Mix > Ativar');
+            console.error('[Audio] Please enable "Stereo Mix" in Windows Control Panel');
+            console.error('[Audio] Control Panel > Sound > Recording > Stereo Mix > Enable');
             return null;
         }
         
-        // Criar stream passthrough com buffer para estabilidade
+        // Create passthrough stream with buffer for stability
         this.audioStream = new PassThrough({
-            highWaterMark: 9600  // 100ms buffer a 48kHz stereo 16-bit para estabilidade
+            highWaterMark: 9600  // 100ms buffer at 48kHz stereo 16-bit for stability
         });
         
-        console.log(`[Áudio] A iniciar captura de: ${device.displayName}`);
+        console.log(`[Audio] Starting capture from: ${device.displayName}`);
         
-        // Argumentos FFmpeg otimizados para latência mínima
-        // Para virtual-audio-capturer, usar configurações especiais
+        // Optimized FFmpeg arguments for minimal latency
+        // For virtual-audio-capturer, use special settings
         let args;
         
         if (device.name.toLowerCase().includes('virtual-audio-capturer')) {
-            // virtual-audio-capturer pode precisar de configurações específicas
+            // virtual-audio-capturer may need specific settings
             args = [
                 '-f', 'dshow',
-                '-audio_buffer_size', '50',          // Buffer maior para estabilidade
+                '-audio_buffer_size', '50',          // Larger buffer for stability
                 '-i', `audio=${device.name}`,
                 '-acodec', 'pcm_s16le',
                 '-ar', '48000',
@@ -239,25 +239,25 @@ class AudioManager extends EventEmitter {
                 '-'
             ];
         } else {
-            // Configuração balanceada - estabilidade vs latência
+            // Balanced configuration - stability vs latency
             args = [
                 '-f', 'dshow',
-                '-audio_buffer_size', '30',          // Buffer de 30ms para estabilidade
+                '-audio_buffer_size', '30',          // 30ms buffer for stability
                 '-i', `audio=${device.name}`,
                 '-acodec', 'pcm_s16le',
                 '-ar', '48000',
                 '-ac', '2',
-                '-flush_packets', '1',               // Enviar pacotes imediatamente
+                '-flush_packets', '1',               // Send packets immediately
                 '-fflags', '+nobuffer+flush_packets',
-                '-flags', 'low_delay',               // Modo baixa latência
-                '-probesize', '32',                  // Análise mínima
-                '-analyzeduration', '0',             // Sem análise de duração
+                '-flags', 'low_delay',               // Low latency mode
+                '-probesize', '32',                  // Minimal analysis
+                '-analyzeduration', '0',             // No duration analysis
                 '-f', 's16le',
                 '-'
             ];
         }
         
-        console.log(`[Áudio] FFmpeg: ${args.join(' ')}`);
+        console.log(`[Audio] FFmpeg: ${args.join(' ')}`);
         
         this.ffmpegProcess = spawn(ffmpegPath, args, {
             stdio: ['ignore', 'pipe', 'pipe']
@@ -266,11 +266,11 @@ class AudioManager extends EventEmitter {
         let dataReceived = false;
         let bytesReceived = 0;
         
-        // Transmitir dados imediatamente sem buffering adicional
+        // Transmit data immediately without additional buffering
         this.ffmpegProcess.stdout.on('data', (data) => {
             if (!dataReceived) {
                 dataReceived = true;
-                console.log(`[Áudio] Primeiros dados recebidos do dispositivo`);
+                console.log(`[Audio] First data received from device`);
             }
             bytesReceived += data.length;
             if (this.audioStream && !this.audioStream.destroyed) {
@@ -278,18 +278,18 @@ class AudioManager extends EventEmitter {
             }
         });
         
-        // Log periódico de bytes recebidos para diagnóstico (apenas em modo debug)
+        // Periodic byte count log for diagnostics (debug mode only)
         if (process.argv.includes('--debug') || process.env.DEBUG === 'true') {
             this._statsInterval = setInterval(() => {
                 if (this._isCapturing) {
-                    console.log(`[Áudio] Bytes recebidos: ${(bytesReceived / 1024).toFixed(1)} KB`);
+                    console.log(`[Audio] Bytes received: ${(bytesReceived / 1024).toFixed(1)} KB`);
                 }
             }, 5000);
         }
         
         this.ffmpegProcess.stderr.on('data', (data) => {
             const msg = data.toString();
-            // Mostrar mais informação para diagnóstico
+            // Show more information for diagnostics
             if (msg.toLowerCase().includes('error')) {
                 console.error(`[FFmpeg ERRO] ${msg.trim()}`);
             } else if (msg.includes('Stream') || msg.includes('Audio')) {
@@ -298,14 +298,14 @@ class AudioManager extends EventEmitter {
         });
         
         this.ffmpegProcess.on('error', (error) => {
-            console.error('[Áudio] Erro ao iniciar FFmpeg:', error.message);
+            console.error('[Audio] Error starting FFmpeg:', error.message);
             this._isCapturing = false;
             this.emit('statusChange');
         });
         
         this.ffmpegProcess.on('close', (code) => {
             if (code !== 0 && code !== null) {
-                console.log(`[Áudio] FFmpeg terminou com código: ${code}`);
+                console.log(`[Audio] FFmpeg exited with code: ${code}`);
             }
             if (this._isCapturing) {
                 this._isCapturing = false;
@@ -314,7 +314,7 @@ class AudioManager extends EventEmitter {
         });
         
         this._isCapturing = true;
-        console.log(`[Áudio] Captura iniciada: ${device.displayName}`);
+        console.log(`[Audio] Capture started: ${device.displayName}`);
         this.emit('statusChange');
         
         return this.audioStream;
@@ -323,42 +323,42 @@ class AudioManager extends EventEmitter {
     stopCapture() {
         if (!this._isCapturing) return;
         
-        console.log('[Áudio] A parar captura...');
+        console.log('[Audio] Stopping capture...');
         
-        // Parar intervalo de estatísticas
+        // Stop stats interval
         if (this._statsInterval) {
             clearInterval(this._statsInterval);
             this._statsInterval = null;
         }
         
-        // Parar intervalo de tom de teste se existir
+        // Stop test tone interval if it exists
         if (this.toneInterval) {
             clearInterval(this.toneInterval);
             this.toneInterval = null;
         }
         
-        // Parar processo FFmpeg
+        // Stop FFmpeg process
         if (this.ffmpegProcess) {
             try {
                 this.ffmpegProcess.kill('SIGTERM');
             } catch (error) {
-                // Ignorar erros ao matar processo
+                // Ignore errors when killing process
             }
             this.ffmpegProcess = null;
         }
         
-        // Fechar stream
+        // Close stream
         if (this.audioStream) {
             try {
                 this.audioStream.end();
             } catch (error) {
-                // Ignorar erros
+                // Ignore errors
             }
             this.audioStream = null;
         }
         
         this._isCapturing = false;
-        console.log('[Áudio] Captura parada');
+        console.log('[Audio] Capture stopped');
         this.emit('statusChange');
     }
     
@@ -366,9 +366,9 @@ class AudioManager extends EventEmitter {
         return this._isCapturing;
     }
     
-    // Gerar tom de teste (seno a 440Hz) - para debug
+    // Generate test tone (440Hz sine wave) - for debug
     generateTestTone(durationMs = 5000) {
-        console.log('[Áudio] A gerar tom de teste...');
+        console.log('[Audio] Generating test tone...');
         this.audioStream = new PassThrough({
             highWaterMark: 960
         });
@@ -376,7 +376,7 @@ class AudioManager extends EventEmitter {
         
         const sampleRate = 48000;
         const channels = 2;
-        const frequency = 440; // Hz (nota A4)
+        const frequency = 440; // Hz (A4 note)
         const amplitude = 0.3;
         
         let phase = 0;
@@ -396,7 +396,7 @@ class AudioManager extends EventEmitter {
                 const sample = Math.sin(phase) * amplitude * 32767;
                 const sampleInt = Math.floor(sample);
                 
-                // Escrever para ambos os canais (estéreo)
+                // Write to both channels (stereo)
                 buffer.writeInt16LE(sampleInt, i * 4);
                 buffer.writeInt16LE(sampleInt, i * 4 + 2);
                 

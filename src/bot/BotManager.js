@@ -12,7 +12,7 @@ const {
     StreamType
 } = require('@discordjs/voice');
 
-// Flag de debug
+// Debug flag
 const DEBUG_MODE = process.argv.includes('--debug') || process.env.DEBUG === 'true';
 
 class BotManager extends EventEmitter {
@@ -24,36 +24,36 @@ class BotManager extends EventEmitter {
         this.presetChannels = new Map(); // `${botIndex}-${guildId}` -> channelId
         
         // Voice Activity Detection (VAD) settings
-        this.vadEnabled = true;           // Ativar/desativar VAD
-        this.vadThreshold = 1;           // Threshold baixo para silêncio absoluto
-        this.vadSilenceTimeout = 500;     // ms de silêncio antes de parar
-        this.vadCheckInterval = 100;      // ms entre verificações (debounce)
+        this.vadEnabled = true;           // Enable/disable VAD
+        this.vadThreshold = 1;           // Low threshold for absolute silence
+        this.vadSilenceTimeout = 500;     // ms of silence before stopping
+        this.vadCheckInterval = 100;      // ms between checks (debounce)
         this._isSpeaking = false;
         this._silenceStartTime = null;
         this._lastSpeakingState = false;
-        this._lastVadCheck = 0;           // Timestamp da última verificação
-        this._consecutiveSilence = 0;     // Contador de frames de silêncio consecutivos
-        this._consecutiveSound = 0;       // Contador de frames de som consecutivos
+        this._lastVadCheck = 0;           // Timestamp of last check
+        this._consecutiveSilence = 0;     // Consecutive silence frames counter
+        this._consecutiveSound = 0;       // Consecutive sound frames counter
     }
     
-    // Guardar canal predefinido para um bot num servidor
+    // Save preset channel for a bot in a server
     setPresetChannel(botIndex, guildId, channelId) {
         const key = `${botIndex}-${guildId}`;
         if (channelId) {
             this.presetChannels.set(key, channelId);
-            console.log(`[Bot] Canal predefinido guardado: Bot ${botIndex}, Servidor ${guildId}, Canal ${channelId}`);
+            console.log(`[Bot] Preset channel saved: Bot ${botIndex}, Server ${guildId}, Channel ${channelId}`);
         } else {
             this.presetChannels.delete(key);
         }
         this.emit('statusChange');
     }
     
-    // Obter canal predefinido
+    // Get preset channel
     getPresetChannel(botIndex, guildId) {
         return this.presetChannels.get(`${botIndex}-${guildId}`);
     }
     
-    // Obter todas as predefinições
+    // Get all presets
     getPresetChannels() {
         const presets = [];
         for (const [key, channelId] of this.presetChannels) {
@@ -66,16 +66,16 @@ class BotManager extends EventEmitter {
                     botIndex: parseInt(botIndex),
                     botName: bot.username,
                     guildId,
-                    guildName: guild?.name || 'Desconhecido',
+                    guildName: guild?.name || 'Unknown',
                     channelId,
-                    channelName: channel?.name || 'Desconhecido'
+                    channelName: channel?.name || 'Unknown'
                 });
             }
         }
         return presets;
     }
     
-    // Entrar em todos os canais predefinidos
+    // Join all preset channels
     async joinAllPresetChannels() {
         const results = [];
         for (const [key, channelId] of this.presetChannels) {
@@ -84,14 +84,14 @@ class BotManager extends EventEmitter {
                 await this.joinChannel(parseInt(botIndex), guildId, channelId);
                 results.push({ success: true, botIndex, guildId, channelId });
             } catch (error) {
-                console.error(`[Bot] Erro ao entrar no canal predefinido:`, error.message);
+                console.error(`[Bot] Error joining preset channel:`, error.message);
                 results.push({ success: false, botIndex, guildId, channelId, error: error.message });
             }
         }
         return results;
     }
     
-    // Sair de todos os canais
+    // Leave all channels
     async leaveAllChannels() {
         for (let i = 0; i < this.bots.length; i++) {
             const bot = this.bots[i];
@@ -121,17 +121,17 @@ class BotManager extends EventEmitter {
             id: null
         };
         
-        // Usar Client#ready para compatibilidade
+        // Use Client#ready for compatibility
         const onReady = () => {
             botInfo.ready = true;
             botInfo.username = client.user.username;
             botInfo.avatar = client.user.displayAvatarURL();
             botInfo.id = client.user.id;
-            console.log(`[Bot] ${client.user.tag} está online!`);
+            console.log(`[Bot] ${client.user.tag} is online!`);
             this.emit('statusChange');
         };
         
-        // Suportar tanto 'ready' como 'clientReady' para futuras versões
+        // Support both 'ready' and 'clientReady' for future versions
         if (client.isReady()) {
             onReady();
         } else {
@@ -139,11 +139,11 @@ class BotManager extends EventEmitter {
         }
         
         client.on('error', (error) => {
-            console.error(`[Bot] Erro:`, error);
+            console.error(`[Bot] Error:`, error);
         });
         
         client.on('voiceStateUpdate', (oldState, newState) => {
-            // Re-emitir mudanças de estado
+            // Re-emit state changes
             this.emit('statusChange');
         });
         
@@ -151,6 +151,51 @@ class BotManager extends EventEmitter {
         this.bots.push(botInfo);
         
         return botInfo;
+    }
+    
+    async removeBot(botIndex) {
+        const bot = this.bots[botIndex];
+        if (!bot) {
+            throw new Error('Bot not found');
+        }
+        
+        // Disconnect from all channels
+        for (const [guildId, connection] of bot.connections) {
+            this.removePlayerFromBroadcast(bot.id, guildId);
+            try {
+                if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+                    connection.destroy();
+                }
+            } catch (e) {}
+        }
+        bot.connections.clear();
+        bot.players.clear();
+        
+        // Destroy the client
+        try {
+            await bot.client.destroy();
+        } catch (e) {
+            console.error(`[Bot] Error destroying client:`, e.message);
+        }
+        
+        // Remove from list and update presets
+        const removedUsername = bot.username;
+        this.bots.splice(botIndex, 1);
+        
+        // Reindex preset channels
+        const newPresets = new Map();
+        for (const [key, channelId] of this.presetChannels) {
+            const [bi, guildId] = key.split('-');
+            const idx = parseInt(bi);
+            if (idx === botIndex) continue; // Remove presets of the removed bot
+            const newIdx = idx > botIndex ? idx - 1 : idx;
+            newPresets.set(`${newIdx}-${guildId}`, channelId);
+        }
+        this.presetChannels = newPresets;
+        
+        console.log(`[Bot] ${removedUsername || 'Bot ' + botIndex} removed`);
+        this.emit('statusChange');
+        return true;
     }
     
     getBotsStatus() {
@@ -167,9 +212,9 @@ class BotManager extends EventEmitter {
                     : null;
                 return {
                     guildId,
-                    guildName: guild?.name || 'Desconhecido',
+                    guildName: guild?.name || 'Unknown',
                     channelId: conn.joinConfig?.channelId,
-                    channelName: channel?.name || 'Desconhecido',
+                    channelName: channel?.name || 'Unknown',
                     status: conn.state?.status || 'unknown'
                 };
             })
@@ -179,7 +224,7 @@ class BotManager extends EventEmitter {
     getGuilds(botIndex = null) {
         const guildsMap = new Map();
         
-        // Se botIndex for especificado, usar apenas esse bot
+        // If botIndex is specified, use only that bot
         const botsToCheck = botIndex !== null && this.bots[botIndex] 
             ? [this.bots[botIndex]] 
             : this.bots;
@@ -222,20 +267,20 @@ class BotManager extends EventEmitter {
     async joinChannel(botIndex, guildId, channelId) {
         const bot = this.bots[botIndex];
         if (!bot || !bot.ready) {
-            throw new Error('Bot não está disponível');
+            throw new Error('Bot is not available');
         }
         
         const guild = bot.client.guilds.cache.get(guildId);
         if (!guild) {
-            throw new Error('Servidor não encontrado');
+            throw new Error('Server not found');
         }
         
         const channel = guild.channels.cache.get(channelId);
         if (!channel) {
-            throw new Error('Canal não encontrado');
+            throw new Error('Channel not found');
         }
         
-        // Desconectar do canal anterior se existir (com verificação de estado)
+        // Disconnect from previous channel if exists (with state check)
         if (bot.connections.has(guildId)) {
             const oldConn = bot.connections.get(guildId);
             try {
@@ -243,13 +288,13 @@ class BotManager extends EventEmitter {
                     oldConn.destroy();
                 }
             } catch (e) {
-                // Ignorar erro se já destruída
+                // Ignore error if already destroyed
             }
             bot.connections.delete(guildId);
             bot.players.delete(guildId);
         }
         
-        // Usar um group único por bot para evitar conflitos entre bots
+        // Use a unique group per bot to avoid conflicts between bots
         const groupId = `bot-${bot.id}`;
         
         const connection = joinVoiceChannel({
@@ -261,22 +306,22 @@ class BotManager extends EventEmitter {
             group: groupId  // Grupo único para cada bot
         });
         
-        // Criar player para esta conexão
+        // Create player for this connection
         const player = createAudioPlayer();
         connection.subscribe(player);
         
         bot.connections.set(guildId, connection);
         bot.players.set(guildId, player);
         
-        // Aguardar conexão
+        // Wait for connection
         try {
             await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
-            console.log(`[Bot] ${bot.username} entrou em ${channel.name}`);
+            console.log(`[Bot] ${bot.username} joined ${channel.name}`);
         } catch (error) {
             connection.destroy();
             bot.connections.delete(guildId);
             bot.players.delete(guildId);
-            throw new Error('Tempo limite ao conectar ao canal de voz');
+            throw new Error('Timeout connecting to voice channel');
         }
         
         // Handle disconnection
@@ -287,7 +332,7 @@ class BotManager extends EventEmitter {
                     entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
                 ]);
             } catch (error) {
-                // Remover da transmissão se estava ativa
+                // Remove from broadcast if it was active
                 this.removePlayerFromBroadcast(bot.id, guildId);
                 
                 try {
@@ -301,9 +346,9 @@ class BotManager extends EventEmitter {
             }
         });
         
-        // Se já está a transmitir, adicionar este player à transmissão
+        // If already broadcasting, add this player to the broadcast
         if (this.isBroadcasting()) {
-            console.log(`[Bot] A adicionar ${bot.username} à transmissão em curso...`);
+            console.log(`[Bot] Adding ${bot.username} to ongoing broadcast...`);
             this.addPlayerToBroadcast(bot, guildId, player);
         }
         
@@ -318,7 +363,7 @@ class BotManager extends EventEmitter {
         
         const connection = bot.connections.get(guildId);
         if (connection) {
-            // Remover da transmissão primeiro
+            // Remove from broadcast first
             this.removePlayerFromBroadcast(bot.id, guildId);
             
             try {
@@ -326,17 +371,17 @@ class BotManager extends EventEmitter {
                     connection.destroy();
                 }
             } catch (e) {
-                // Ignorar erro se já destruída
+                // Ignore error if already destroyed
             }
             bot.connections.delete(guildId);
             bot.players.delete(guildId);
-            console.log(`[Bot] ${bot.username} saiu do servidor ${guildId}`);
+            console.log(`[Bot] ${bot.username} left server ${guildId}`);
         }
         
         this.emit('statusChange');
     }
     
-    // Verificar se há bots conectados a canais
+    // Check if there are bots connected to channels
     hasActiveConnections() {
         for (const bot of this.bots) {
             if (bot.connections.size > 0) {
@@ -346,7 +391,7 @@ class BotManager extends EventEmitter {
         return false;
     }
     
-    // Contar conexões ativas
+    // Count active connections
     getActiveConnectionCount() {
         let count = 0;
         for (const bot of this.bots) {
@@ -355,19 +400,19 @@ class BotManager extends EventEmitter {
         return count;
     }
     
-    // Verificar se está a transmitir
+    // Check if broadcasting
     isBroadcasting() {
         return this.sourceStream !== null && !this.sourceStream.destroyed;
     }
     
     startBroadcast(audioStream) {
-        // Verificar se há conexões ativas
+        // Check if there are active connections
         if (!this.hasActiveConnections()) {
-            console.warn('[Broadcast] Nenhum bot está conectado a um canal de voz!');
+            console.warn('[Broadcast] No bot is connected to a voice channel!');
             return false;
         }
         
-        // Parar transmissão anterior se existir
+        // Stop previous broadcast if exists
         if (this.isBroadcasting()) {
             this.stopBroadcast();
         }
@@ -375,8 +420,8 @@ class BotManager extends EventEmitter {
         this.sourceStream = audioStream;
         this._isBroadcasting = true;
         
-        // Iniciar VAD assumindo que está a falar (para não perder início de som)
-        // O VAD vai detetar silêncio e parar se não houver som
+        // Start VAD assuming speaking (to not miss sound start)
+        // VAD will detect silence and stop if there's no sound
         this._isSpeaking = true;
         this._lastSpeakingState = true;
         this._silenceStartTime = null;
@@ -384,19 +429,19 @@ class BotManager extends EventEmitter {
         this._consecutiveSilence = 0;
         this._consecutiveSound = 0;
         
-        // Buffer de sincronização - acumula dados antes de enviar
-        // Isto ajuda a manter todos os bots sincronizados
+        // Sync buffer - accumulates data before sending
+        // This helps keep all bots synchronized
         const SYNC_BUFFER_SIZE = 3840; // 40ms a 48kHz stereo 16-bit
         let syncBuffer = Buffer.alloc(0);
         
-        // Listener para distribuir dados para todas as branches de forma síncrona
+        // Listener to distribute data to all branches synchronously
         this._dataHandler = (chunk) => {
             if (!this._isBroadcasting) return;
             
-            // Acumular no buffer de sincronização
+            // Accumulate in sync buffer
             syncBuffer = Buffer.concat([syncBuffer, chunk]);
             
-            // Enviar quando temos dados suficientes
+            // Send when we have enough data
             while (syncBuffer.length >= SYNC_BUFFER_SIZE) {
                 const toSend = syncBuffer.slice(0, SYNC_BUFFER_SIZE);
                 syncBuffer = syncBuffer.slice(SYNC_BUFFER_SIZE);
@@ -405,45 +450,45 @@ class BotManager extends EventEmitter {
                 const now = Date.now();
                 const hasSound = this._detectVoiceActivity(toSend);
                 
-                // Lógica simples: som = transmitir, silêncio prolongado = parar
+                // Simple logic: sound = transmit, prolonged silence = stop
                 if (hasSound) {
-                    // Som detetado - transmitir e resetar timer de silêncio
+                    // Sound detected - transmit and reset silence timer
                     this._silenceStartTime = null;
                     
                     if (!this._isSpeaking) {
                         this._isSpeaking = true;
-                        if (DEBUG_MODE) console.log('[VAD] 🎤 Som detetado - a transmitir');
+                        if (DEBUG_MODE) console.log('[VAD] 🎤 Sound detected - transmitting');
                         this.emit('speakingChange', true);
                     }
                 } else {
-                    // Silêncio detetado
+                    // Silence detected
                     if (this._isSpeaking) {
                         if (!this._silenceStartTime) {
                             this._silenceStartTime = now;
                         } else if (now - this._silenceStartTime > this.vadSilenceTimeout) {
-                            // Silêncio prolongado - parar transmissão
+                            // Prolonged silence - stop transmission
                             this._isSpeaking = false;
-                            if (DEBUG_MODE) console.log('[VAD] 🔇 Silêncio detetado - a pausar');
+                            if (DEBUG_MODE) console.log('[VAD] 🔇 Silence detected - pausing');
                             this.emit('speakingChange', false);
                         }
-                        // Continuar a transmitir durante o período de silêncio (até timeout)
+                        // Continue transmitting during silence period (until timeout)
                     }
                 }
                 
-                // Transmitir se: VAD desativado OU está a falar OU ainda no período de silêncio (antes do timeout)
+                // Transmit if: VAD disabled OR speaking OR still in silence period (before timeout)
                 const shouldTransmit = !this.vadEnabled || this._isSpeaking || 
                     (this._silenceStartTime && (now - this._silenceStartTime <= this.vadSilenceTimeout));
                 
                 if (shouldTransmit) {
-                    // Enviar para todas as branches ao mesmo tempo
+                    // Send to all branches at the same time
                     const branches = Array.from(this.streamBranches.entries());
                     let transmitted = 0;
                     let recreated = 0;
                     
                     for (const [connectionId, branch] of branches) {
-                        // Se o branch foi destruído, recriar
+                        // If branch was destroyed, recreate
                         if (!branch || branch.destroyed) {
-                            // Encontrar o bot e player correspondente
+                            // Find the corresponding bot and player
                             const [botId, guildId] = connectionId.split('-');
                             const bot = this.bots.find(b => b.id === botId);
                             if (bot) {
@@ -451,7 +496,7 @@ class BotManager extends EventEmitter {
                                 if (player) {
                                     this._setupBranchForPlayer(bot, guildId, player);
                                     recreated++;
-                                    // Tentar enviar para o novo branch
+                                    // Try sending to new branch
                                     const newBranch = this.streamBranches.get(connectionId);
                                     if (newBranch && !newBranch.destroyed) {
                                         newBranch.write(toSend);
@@ -460,28 +505,28 @@ class BotManager extends EventEmitter {
                                 }
                             }
                         } else {
-                            // Verificar se o buffer interno não está cheio
+                            // Check if internal buffer is not full
                             if (branch.writableLength < branch.writableHighWaterMark * 2) {
                                 branch.write(toSend);
                                 transmitted++;
                             } else {
-                                console.warn('[Broadcast] Buffer cheio, a descartar dados para evitar delay');
+                                console.warn('[Broadcast] Buffer full, discarding data to avoid delay');
                             }
                         }
                     }
                     
-                    // Log de debug (apenas uma vez por segundo)
+                    // Debug log (only once per second)
                     if (DEBUG_MODE && (!this._lastTransmitLog || now - this._lastTransmitLog > 1000)) {
                         if (recreated > 0) {
-                            console.log(`[VAD Debug] Transmitindo para ${transmitted} branches (${recreated} recriados)`);
+                            console.log(`[VAD Debug] Transmitting to ${transmitted} branches (${recreated} recreated)`);
                         } else {
-                            console.log(`[VAD Debug] Transmitindo para ${transmitted} branches`);
+                            console.log(`[VAD Debug] Transmitting to ${transmitted} branches`);
                         }
                         this._lastTransmitLog = now;
                     }
                 }
-                // Quando em silêncio, simplesmente não enviar nada
-                // Os branches podem ser destruídos mas serão recriados quando o som voltar
+                // When silent, simply don't send anything
+                // Branches can be destroyed but will be recreated when sound returns
             }
         };
         
@@ -494,18 +539,18 @@ class BotManager extends EventEmitter {
         });
         
         audioStream.once('error', (err) => {
-            console.error('[Broadcast] Erro no stream de áudio:', err.message);
+            console.error('[Broadcast] Audio stream error:', err.message);
             this._isBroadcasting = false;
         });
         
-        // Criar branches para todas as conexões ativas
+        // Create branches for all active connections
         this._setupAllBranches();
         
-        console.log(`[Broadcast] Iniciado para ${this.getActiveConnectionCount()} conexão(ões)`);
+        console.log(`[Broadcast] Started for ${this.getActiveConnectionCount()} connection(s)`);
         return true;
     }
     
-    // Configurar branches para todos os players ativos
+    // Setup branches for all active players
     _setupAllBranches() {
         for (const bot of this.bots) {
             for (const [guildId, player] of bot.players) {
@@ -514,11 +559,11 @@ class BotManager extends EventEmitter {
         }
     }
     
-    // Configurar branch individual para um player
+    // Setup individual branch for a player
     _setupBranchForPlayer(bot, guildId, player) {
         const connectionId = `${bot.id}-${guildId}`;
         
-        // Remover branch anterior se existir
+        // Remove previous branch if exists
         if (this.streamBranches.has(connectionId)) {
             const oldBranch = this.streamBranches.get(connectionId);
             if (!oldBranch.destroyed) {
@@ -527,7 +572,7 @@ class BotManager extends EventEmitter {
         }
         
         try {
-            // Buffer maior para estabilidade (evita cortes)
+            // Larger buffer for stability (prevents cuts)
             const branch = new PassThrough({
                 highWaterMark: 19200  // 200ms buffer a 48kHz stereo 16-bit
             });
@@ -539,15 +584,15 @@ class BotManager extends EventEmitter {
             });
             
             player.play(resource);
-            if (DEBUG_MODE) console.log(`[Bot] ${bot.username} a transmitir para ${guildId}`);
+            if (DEBUG_MODE) console.log(`[Bot] ${bot.username} broadcasting to ${guildId}`);
             return true;
         } catch (error) {
-            console.error(`[Bot] Erro ao configurar transmissão:`, error);
+            console.error(`[Bot] Error setting up broadcast:`, error);
             return false;
         }
     }
     
-    // Adicionar um novo player à transmissão em curso
+    // Add a new player to the ongoing broadcast
     addPlayerToBroadcast(bot, guildId, player) {
         if (!this.isBroadcasting()) {
             return false;
@@ -556,7 +601,7 @@ class BotManager extends EventEmitter {
         return this._setupBranchForPlayer(bot, guildId, player);
     }
     
-    // Remover um player da transmissão
+    // Remove a player from the broadcast
     removePlayerFromBroadcast(botId, guildId) {
         const connectionId = `${botId}-${guildId}`;
         const branch = this.streamBranches.get(connectionId);
@@ -572,13 +617,13 @@ class BotManager extends EventEmitter {
     stopBroadcast() {
         this._isBroadcasting = false;
         
-        // Remover listener do stream fonte
+        // Remove listener from source stream
         if (this.sourceStream && this._dataHandler) {
             this.sourceStream.removeListener('data', this._dataHandler);
         }
         this._dataHandler = null;
         
-        // Fechar todas as branches
+        // Close all branches
         for (const branch of this.streamBranches.values()) {
             if (!branch.destroyed) {
                 branch.end();
@@ -587,52 +632,52 @@ class BotManager extends EventEmitter {
         this.streamBranches.clear();
         this.sourceStream = null;
         
-        // Parar todos os players
+        // Stop all players
         for (const bot of this.bots) {
             for (const [guildId, player] of bot.players) {
                 try {
                     player.stop();
                 } catch (e) {
-                    // Ignorar erros ao parar
+                    // Ignore errors when stopping
                 }
             }
         }
         
-        console.log('[Broadcast] Transmissão parada');
+        console.log('[Broadcast] Broadcast stopped');
     }
     
-    // Detectar atividade de voz (Voice Activity Detection)
+    // Detect voice activity (Voice Activity Detection)
     _detectVoiceActivity(audioBuffer) {
-        // Audio é PCM 16-bit signed little-endian stereo
-        // Calcular RMS (Root Mean Square) do áudio
+        // Audio is PCM 16-bit signed little-endian stereo
+        // Calculate RMS (Root Mean Square) of audio
         let sumSquares = 0;
-        const samples = audioBuffer.length / 2; // 2 bytes por sample (16-bit)
+        const samples = audioBuffer.length / 2; // 2 bytes per sample (16-bit)
         
         for (let i = 0; i < audioBuffer.length; i += 2) {
-            // Ler sample como signed 16-bit little-endian
+            // Read sample as signed 16-bit little-endian
             const sample = audioBuffer.readInt16LE(i);
             sumSquares += sample * sample;
         }
         
         const rms = Math.sqrt(sumSquares / samples);
         
-        // Comparar com threshold
+        // Compare with threshold
         return rms > this.vadThreshold;
     }
     
-    // Definir threshold do VAD
+    // Set VAD threshold
     setVadThreshold(threshold) {
         this.vadThreshold = Math.max(0, Math.min(32767, threshold));
-        console.log(`[VAD] Threshold definido para: ${this.vadThreshold}`);
+        console.log(`[VAD] Threshold set to: ${this.vadThreshold}`);
     }
     
-    // Ativar/desativar VAD
+    // Enable/disable VAD
     setVadEnabled(enabled) {
         this.vadEnabled = enabled;
-        console.log(`[VAD] ${enabled ? 'Ativado' : 'Desativado'}`);
+        console.log(`[VAD] ${enabled ? 'Enabled' : 'Disabled'}`);
     }
     
-    // Obter estado do VAD
+    // Get VAD status
     getVadStatus() {
         return {
             enabled: this.vadEnabled,
@@ -644,19 +689,19 @@ class BotManager extends EventEmitter {
     
     async shutdown() {
         for (const bot of this.bots) {
-            // Desconectar de todos os canais
+            // Disconnect from all channels
             for (const connection of bot.connections.values()) {
                 try {
                     if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
                         connection.destroy();
                     }
                 } catch (e) {
-                    // Ignorar erro se já destruída
+                    // Ignore error if already destroyed
                 }
             }
             bot.connections.clear();
             bot.players.clear();
-            // Desligar o client
+            // Destroy the client
             await bot.client.destroy();
         }
         this.bots = [];

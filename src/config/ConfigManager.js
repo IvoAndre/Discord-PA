@@ -8,15 +8,16 @@ class ConfigManager extends EventEmitter {
     constructor() {
         super();
         this.config = {
-            audioDevice: null,           // ID do dispositivo de áudio predefinido
-            channelPresets: [],          // Array de { botIndex, guildId, channelId }
-            lastUsedDevice: null,        // Último dispositivo usado
-            volume: 100,                 // Volume (para futuro uso)
-            autoStartBroadcast: false,   // Auto-iniciar transmissão ao conectar
+            tokens: [],                  // Array of bot tokens
+            audioDevice: null,           // Default audio device ID
+            channelPresets: [],          // Array of { botIndex, guildId, channelId }
+            lastUsedDevice: null,        // Last used device
+            volume: 100,                 // Volume (for future use)
+            autoStartBroadcast: false,   // Auto-start broadcast on connect
             // VAD settings
-            vadEnabled: true,            // Ativar/desativar VAD
-            vadThreshold: 50,            // Threshold baixo para silêncio absoluto
-            vadSilenceTimeout: 500,      // ms de silêncio antes de parar
+            vadEnabled: true,            // Enable/disable VAD
+            vadThreshold: 50,            // Low threshold for absolute silence
+            vadSilenceTimeout: 500,      // ms of silence before stopping
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -24,47 +25,47 @@ class ConfigManager extends EventEmitter {
         this.load();
     }
     
-    // Carregar configurações do ficheiro
+    // Load settings from file
     load() {
         try {
             if (fs.existsSync(CONFIG_FILE)) {
                 const data = fs.readFileSync(CONFIG_FILE, 'utf8');
                 const loaded = JSON.parse(data);
                 this.config = { ...this.config, ...loaded };
-                console.log('[Config] Configurações carregadas de', CONFIG_FILE);
+                console.log('[Config] Settings loaded from', CONFIG_FILE);
                 return true;
             } else {
-                console.log('[Config] Ficheiro de configuração não encontrado, a usar predefinições');
-                this.save(); // Criar ficheiro com predefinições
+                console.log('[Config] Config file not found, using defaults');
+                this.save(); // Create file with defaults
                 return false;
             }
         } catch (error) {
-            console.error('[Config] Erro ao carregar configurações:', error.message);
+            console.error('[Config] Error loading settings:', error.message);
             return false;
         }
     }
     
-    // Guardar configurações no ficheiro
+    // Save settings to file
     save() {
         try {
             this.config.updatedAt = new Date().toISOString();
             const data = JSON.stringify(this.config, null, 2);
             fs.writeFileSync(CONFIG_FILE, data, 'utf8');
-            console.log('[Config] Configurações guardadas');
+            console.log('[Config] Settings saved');
             this.emit('saved');
             return true;
         } catch (error) {
-            console.error('[Config] Erro ao guardar configurações:', error.message);
+            console.error('[Config] Error saving settings:', error.message);
             return false;
         }
     }
     
-    // Obter dispositivo de áudio predefinido
+    // Get default audio device
     getAudioDevice() {
         return this.config.audioDevice;
     }
     
-    // Definir dispositivo de áudio predefinido
+    // Set default audio device
     setAudioDevice(deviceId) {
         this.config.audioDevice = deviceId;
         this.config.lastUsedDevice = deviceId;
@@ -72,25 +73,25 @@ class ConfigManager extends EventEmitter {
         this.emit('audioDeviceChanged', deviceId);
     }
     
-    // Obter predefinições de canais
+    // Get channel presets
     getChannelPresets() {
         return this.config.channelPresets || [];
     }
     
-    // Adicionar predefinição de canal
+    // Add channel preset
     addChannelPreset(botIndex, guildId, channelId, guildName, channelName, botName) {
-        // Remover predefinição existente para o mesmo bot/servidor
+        // Remove existing preset for the same bot/server
         this.config.channelPresets = this.config.channelPresets.filter(
             p => !(p.botIndex === botIndex && p.guildId === guildId)
         );
         
-        // Adicionar nova predefinição
+        // Add new preset
         this.config.channelPresets.push({
             botIndex,
             guildId,
             channelId,
-            guildName: guildName || 'Desconhecido',
-            channelName: channelName || 'Desconhecido',
+            guildName: guildName || 'Unknown',
+            channelName: channelName || 'Unknown',
             botName: botName || `Bot ${botIndex}`,
             createdAt: new Date().toISOString()
         });
@@ -99,7 +100,7 @@ class ConfigManager extends EventEmitter {
         this.emit('presetAdded', { botIndex, guildId, channelId });
     }
     
-    // Remover predefinição de canal
+    // Remove channel preset
     removeChannelPreset(botIndex, guildId) {
         const before = this.config.channelPresets.length;
         this.config.channelPresets = this.config.channelPresets.filter(
@@ -112,14 +113,14 @@ class ConfigManager extends EventEmitter {
         }
     }
     
-    // Limpar todas as predefinições de canais
+    // Clear all channel presets
     clearChannelPresets() {
         this.config.channelPresets = [];
         this.save();
         this.emit('presetsCleared');
     }
     
-    // Obter configuração completa
+    // Get full configuration
     getAll() {
         return { ...this.config };
     }
@@ -151,14 +152,58 @@ class ConfigManager extends EventEmitter {
         this.emit('vadChanged', this.getVadSettings());
     }
     
-    // Definir configuração
+    // === Token Management ===
+    
+    // Get all tokens
+    getTokens() {
+        return this.config.tokens || [];
+    }
+    
+    // Add a token
+    addToken(token) {
+        if (!this.config.tokens) {
+            this.config.tokens = [];
+        }
+        // Check if already exists
+        if (this.config.tokens.includes(token)) {
+            return false;
+        }
+        this.config.tokens.push(token);
+        this.save();
+        this.emit('tokenAdded', token);
+        return true;
+    }
+    
+    // Remove a token by index
+    removeToken(index) {
+        if (!this.config.tokens || index < 0 || index >= this.config.tokens.length) {
+            return false;
+        }
+        const removed = this.config.tokens.splice(index, 1)[0];
+        
+        // Update channelPresets: remove presets of the removed bot and reindex
+        if (this.config.channelPresets) {
+            this.config.channelPresets = this.config.channelPresets
+                .filter(p => p.botIndex !== index)
+                .map(p => ({
+                    ...p,
+                    botIndex: p.botIndex > index ? p.botIndex - 1 : p.botIndex
+                }));
+        }
+        
+        this.save();
+        this.emit('tokenRemoved', { index, token: removed });
+        return true;
+    }
+    
+    // Set configuration
     set(key, value) {
         this.config[key] = value;
         this.save();
         this.emit('configChanged', { key, value });
     }
     
-    // Obter configuração
+    // Get configuration
     get(key) {
         return this.config[key];
     }
